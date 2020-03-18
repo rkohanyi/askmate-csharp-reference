@@ -1,6 +1,14 @@
+@using AskMateWebApp.Domain
+@model List<Question>
 @{
     ViewData["Title"] = "Questions";
 }
 <h1>@ViewData["Title"]</h1>
-
-<p>Here will be questions!</p>
+<ul>
+    @foreach (var q in Model)
+    {
+        <li>
+            <h2>@q.Title</h2>
+        </li>
+    }
+</ul>
