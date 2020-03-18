@@ -27,5 +27,12 @@ namespace AskMateWebApp.Controllers
             var questions = _questionsService.GetAll();
             return View(questions);
         }
+
+        [HttpGet]
+        public IActionResult Get(int id)
+        {
+            var question = _questionsService.GetOne(id);
+            return View(question);
+        }
     }
 }

@@ -21,5 +21,17 @@ namespace AskMateWebApp.Services
         {
             return _questions;
         }
+
+        public Question GetOne(int id)
+        {
+            foreach (var q in _questions)
+            {
+                if (q.Id == id)
+                {
+                    return q;
+                }
+            }
+            return null;
+        }
     }
 }
