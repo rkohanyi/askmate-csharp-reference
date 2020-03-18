@@ -1,0 +1,8 @@
+@using AskMateWebApp.Domain
+@model Question
+@{
+    ViewData["Title"] = Model.Title;
+}
+<h1>Title: @ViewData["Title"]</h1>
+<h2>ID: @Model.Id</h2>
+<h2>Message: @Model.Message</h2>
