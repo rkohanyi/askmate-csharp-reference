@@ -27,7 +27,7 @@ namespace AskMateWebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get(int id)
+        public IActionResult Details(int id)
         {
             var question = _questionsService.GetOne(id);
             var answers = _answersService.GetAll(id);
