@@ -1,8 +1,15 @@
 @model QuestionDetailModel
+@functions {
+    private string tryPluralize(int count, string singular, string plural)
+    {
+        return count == 0 || count == 1 ? singular : plural;
+    }
+}
 @{
     ViewData["Title"] = Model.Title;
 }
 <h1 class="display-4">@ViewData["Title"]</h1>
+<small class="text-muted">@Model.SubmissionTime, @Model.ViewNumber @tryPluralize(Model.ViewNumber, "view", "views"), @Model.VoteNumber @tryPluralize(Model.VoteNumber, "vote", "votes")</small>
 <p>@Model.Message</p>
 <h2 class="display-5">Answers</h2>
 @if (Model.Answers.Count == 0)
