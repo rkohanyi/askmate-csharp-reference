@@ -20,7 +20,7 @@ namespace AskMateWebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult All()
+        public IActionResult List()
         {
             var questions = _questionsService.GetAll();
             return View(questions.Select(x => new QuestionListItemModel(x)).ToList());
