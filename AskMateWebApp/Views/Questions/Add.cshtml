@@ -1,0 +1,14 @@
+@model AddQuestionModel
+@{
+    ViewData["Title"] = "Add Question";
+}
+<h1 class="display-4">@ViewData["Title"]</h1>
+<form method="post" asp-action="Add">
+    <label asp-for="Title"></label>
+    <input asp-for="Title" /> <br />
+    <span asp-validation-for="Title"></span>
+    <label asp-for="Message"></label>
+    <input asp-for="Message" /> <br />
+    <span asp-validation-for="Message"></span>
+    <input type="submit" value="Add" />
+</form>

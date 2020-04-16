@@ -1,14 +1,14 @@
-@using AskMateWebApp.Domain
-@model List<Question>
+@model List<QuestionModel>
 @{
     ViewData["Title"] = "Questions";
 }
-<h1>@ViewData["Title"]</h1>
+<h1 class="display-4">@ViewData["Title"]</h1>
 <ul>
     @foreach (var q in Model)
     {
         <li>
-            <a asp-controller="Questions" asp-action="Get" asp-route-id="@q.Id"><h2>@q.Title</h2></a>
+            <a asp-controller="Questions" asp-action="Get" asp-route-id="@q.Id">@q.Title</a>
         </li>
     }
 </ul>
+<a asp-controller="Questions" asp-action="Add">Add Question</a>

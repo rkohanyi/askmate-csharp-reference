@@ -1,14 +1,12 @@
 using AskMateWebApp.Domain;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace AskMateWebApp.Services
 {
     public class InMemoryQuestionsService : IQuestionsService
     {
-        private List<Question> _questions = new List<Question>();
+        private readonly List<Question> _questions = new List<Question>();
 
         public InMemoryQuestionsService()
         {
@@ -32,6 +30,13 @@ namespace AskMateWebApp.Services
                 }
             }
             return null;
+        }
+
+        public int Add(string title, string message)
+        {
+            int nextId = _questions.Select(x => x.Id).Max() + 1;
+            _questions.Add(new Question { Id = nextId, Title = title, Message = message });
+            return nextId;
         }
     }
 }

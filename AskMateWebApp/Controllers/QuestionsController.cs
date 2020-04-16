@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using AskMateWebApp.Models;
@@ -25,14 +21,27 @@ namespace AskMateWebApp.Controllers
         public IActionResult All()
         {
             var questions = _questionsService.GetAll();
-            return View(questions);
+            return View(questions.Select(x => new QuestionModel(x)).ToList());
         }
 
         [HttpGet]
         public IActionResult Get(int id)
         {
             var question = _questionsService.GetOne(id);
-            return View(question);
+            return View(new QuestionModel(question));
+        }
+
+        [HttpGet]
+        public IActionResult Add()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Add(AddQuestionModel newQuestion)
+        {
+            int id = _questionsService.Add(newQuestion.Title, newQuestion.Message);
+            return RedirectToAction("Get", new { id });
         }
     }
 }
