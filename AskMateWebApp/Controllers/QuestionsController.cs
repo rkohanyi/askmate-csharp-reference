@@ -44,7 +44,7 @@ namespace AskMateWebApp.Controllers
         public IActionResult Add(AddQuestionModel newQuestion)
         {
             int id = _questionsService.Add(newQuestion.Title, newQuestion.Message);
-            return RedirectToAction("Get", new { id });
+            return RedirectToAction("Details", new { id });
         }
 
         [HttpGet]
