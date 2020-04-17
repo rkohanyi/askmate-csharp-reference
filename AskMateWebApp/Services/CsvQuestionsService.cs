@@ -21,6 +21,12 @@ namespace AskMateWebApp.Services
             return nextId;
         }
 
+        public void Update(int id, string title, string message)
+        {
+            Question q = toQuestion(readFrom(id));
+            updateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber, q.VoteNumber, title, message);
+        }
+
         public List<Question> GetAll()
         {
             return readAllFrom()

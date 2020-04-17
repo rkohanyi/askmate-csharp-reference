@@ -49,6 +49,24 @@ namespace AskMateWebApp.Controllers
         }
 
         [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var question = _questionsService.GetOne(id);
+            return View(new AddQuestionModel
+            {
+                Title = question.Title,
+                Message = question.Message
+            });
+        }
+
+        [HttpPost]
+        public IActionResult Edit(int id, AddQuestionModel newQuestion)
+        {
+            _questionsService.Update(id, newQuestion.Title, newQuestion.Message);
+            return RedirectToAction("Details", new { id });
+        }
+
+        [HttpGet]
         [Route("[controller]/Add/[action]/{id}", Name = "add-answer")]
         public IActionResult Answer()
         {

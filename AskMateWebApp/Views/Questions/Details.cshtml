@@ -10,7 +10,7 @@
 }
 <h1 class="display-4">
     <small class="text-muted">
-        <form class="inline" method="post" asp-action="Delete" asp-route-id="@Model.Id"  asp-route-redirect="/">
+        <form class="inline" method="post" asp-action="Delete" asp-route-id="@Model.Id" asp-route-redirect="/">
             <a href="#" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
         </form>
     </small>
@@ -47,4 +47,5 @@ else
         }
     </ul>
 }
+<a asp-action="Edit" asp-route-id="@Model.Id">Edit question</a>
 <a asp-route="add-answer" asp-route-id="@Model.Id">Add answer</a>
