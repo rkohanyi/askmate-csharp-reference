@@ -15,7 +15,8 @@ namespace AskMateWebApp.Services
 
         public int Add(string title, string message)
         {
-            int nextId = GetAll().Select(x => x.Id).Max() + 1;
+            var questions = GetAll();
+            int nextId = questions.Count == 0 ? 1 : questions.Select(x => x.Id).Max() + 1;
             appendTo(nextId, DateTimeOffset.Now.ToUnixTimeSeconds(), 0, 0, title, message);
             return nextId;
         }
@@ -42,6 +43,11 @@ namespace AskMateWebApp.Services
         {
             Question q = toQuestion(readFrom(id));
             updateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber, q.VoteNumber + votes, q.Title, q.Message);
+        }
+
+        public void Delete(int id)
+        {
+            deleteAt(id);
         }
 
         private Question toQuestion(string[] fields)

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AskMateWebApp.Services
@@ -27,9 +28,20 @@ namespace AskMateWebApp.Services
 
         public int Add(int questionId, string message)
         {
-            int nextId = GetAll().Select(x => x.Id).Max() + 1;
+            var answers = GetAll();
+            int nextId = answers.Count == 0 ? 1 : answers.Select(x => x.Id).Max() + 1;
             appendTo(nextId, questionId, message);
             return nextId;
+        }
+
+        public void Delete(int id)
+        {
+            deleteAt(id);
+        }
+
+        public void DeleteAll(int questionId)
+        {
+            deleteAt(fields => !fields[1].Equals(questionId.ToString()));
         }
 
         private List<Answer> GetAll()

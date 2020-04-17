@@ -8,5 +8,7 @@ namespace AskMateWebApp.Services
         List<Answer> GetAll(int questionId);
         Answer GetOne(int id);
         int Add(int questionId, string message);
+        void Delete(int id);
+        void DeleteAll(int questionId);
     }
 }

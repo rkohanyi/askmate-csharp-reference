@@ -9,14 +9,19 @@
     ViewData["Title"] = Model.Title;
 }
 <h1 class="display-4">
+    <small class="text-muted">
+        <form class="inline" method="post" asp-action="Delete" asp-route-id="@Model.Id"  asp-route-redirect="/">
+            <a href="#" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
+        </form>
+    </small>
     <span>@ViewData["Title"]</span>
     <small class="text-muted">
         <form class="inline" method="post" asp-route="vote-up" asp-route-id="@Model.Id">
-            <a href="#" onclick="javascript: this.parentNode.submit(); return false;">+</a>
+            <a href="#" onclick="javascript: this.parentNode.submit(); return false;">&plus;</a>
         </form>
         /
         <form class="inline" method="post" asp-route="vote-down" asp-route-id="@Model.Id">
-            <a href="#" onclick="javascript: this.parentNode.submit(); return false;">-</a>
+            <a href="#" onclick="javascript: this.parentNode.submit(); return false;">&minus;</a>
         </form>
     </small>
 </h1>
@@ -32,7 +37,13 @@ else
     <ul>
         @foreach (var a in Model.Answers)
         {
-            <li>@a.Message</li>
+            <li>
+                <form class="inline" method="post" asp-controller="Answers" asp-action="Delete" asp-route-id="@a.Id">
+                    <a href="#" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
+                </form>
+
+                <span>@a.Message</span>
+            </li>
         }
     </ul>
 }

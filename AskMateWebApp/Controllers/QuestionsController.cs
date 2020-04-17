@@ -78,5 +78,17 @@ namespace AskMateWebApp.Controllers
             _questionsService.Vote(id, -1);
             return Redirect(Request.Headers["Referer"]);
         }
+
+        [HttpPost]
+        public IActionResult Delete(int id, string redirect)
+        {
+            _questionsService.Delete(id);
+            _answersService.DeleteAll(id);
+            if (redirect == null)
+            {
+                return Redirect(Request.Headers["Referer"]);
+            }
+            return LocalRedirect(redirect);
+        }
     }
 }
