@@ -21,6 +21,17 @@ namespace AskMateWebApp.Services
             File.AppendAllText(_csvPath, string.Join(_delimiter, fields) + Environment.NewLine);
         }
 
+        internal void updateAt(int id, params object[] fields)
+        {
+            var lines = File.ReadAllLines(_csvPath).Select(line =>
+            {
+                if (line.StartsWith(id + _delimiter))
+                    return string.Join(_delimiter, fields);
+                return line;
+            });
+            File.WriteAllLines(_csvPath, lines);
+        }
+
         internal string[] readFrom(int id)
         {
             return File.ReadAllLines(_csvPath)

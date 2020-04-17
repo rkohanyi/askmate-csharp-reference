@@ -29,7 +29,9 @@ namespace AskMateWebApp.Services
 
         public Question GetOne(int id)
         {
-            return toQuestion(readFrom(id));
+            Question q = toQuestion(readFrom(id));
+            updateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber + 1, q.VoteNumber, q.Title, q.Message);
+            return q;
         }
 
         private Question toQuestion(string[] fields)
