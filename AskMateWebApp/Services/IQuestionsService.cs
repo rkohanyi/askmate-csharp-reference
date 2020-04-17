@@ -8,5 +8,6 @@ namespace AskMateWebApp.Services
         List<Question> GetAll();
         Question GetOne(int id);
         int Add(string title, string message);
+        void View(int id);
     }
 }

@@ -31,6 +31,7 @@ namespace AskMateWebApp.Controllers
         {
             var question = _questionsService.GetOne(id);
             var answers = _answersService.GetAll(id);
+            _questionsService.View(id);
             return View(new QuestionDetailModel(question, answers));
         }
 
