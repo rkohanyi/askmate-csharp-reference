@@ -6,9 +6,17 @@
 <ul>
     @foreach (var q in Model)
     {
-        <li>
-            <a asp-controller="Questions" asp-action="Details" asp-route-id="@q.Id">@q.Title</a>
-        </li>
+    <li>
+        <a asp-controller="Questions" asp-action="Details" asp-route-id="@q.Id">@q.Title</a>
+
+        <form class="inline" method="post" asp-route="vote-up" asp-route-id="@q.Id">
+            <a href="#" onclick="javascript: this.parentNode.submit(); return false;">+</a>
+        </form>
+        /
+        <form class="inline" method="post" asp-route="vote-down" asp-route-id="@q.Id">
+            <a href="#" onclick="javascript: this.parentNode.submit(); return false;">-</a>
+        </form>
+    </li>
     }
 </ul>
 <a asp-controller="Questions" asp-action="Add">Add question</a>

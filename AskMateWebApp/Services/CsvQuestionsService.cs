@@ -36,7 +36,12 @@ namespace AskMateWebApp.Services
         {
             Question q = toQuestion(readFrom(id));
             updateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber + 1, q.VoteNumber, q.Title, q.Message);
-            return q;
+        }
+
+        public void Vote(int id, int votes)
+        {
+            Question q = toQuestion(readFrom(id));
+            updateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber, q.VoteNumber + votes, q.Title, q.Message);
         }
 
         private Question toQuestion(string[] fields)

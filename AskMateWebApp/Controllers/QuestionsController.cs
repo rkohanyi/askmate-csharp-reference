@@ -62,5 +62,21 @@ namespace AskMateWebApp.Controllers
             _answersService.Add(id, newAnswer.Message);
             return RedirectToAction("Details", new { id });
         }
+
+        [HttpPost]
+        [Route("[controller]/Vote/[action]/{id}", Name = "vote-up")]
+        public IActionResult Up(int id)
+        {
+            _questionsService.Vote(id, 1);
+            return Redirect(Request.Headers["Referer"]);
+        }
+
+        [HttpPost]
+        [Route("[controller]/Vote/[action]/{id}", Name = "vote-down")]
+        public IActionResult Down(int id)
+        {
+            _questionsService.Vote(id, -1);
+            return Redirect(Request.Headers["Referer"]);
+        }
     }
 }

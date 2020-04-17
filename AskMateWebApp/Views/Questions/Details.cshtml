@@ -8,7 +8,18 @@
 @{
     ViewData["Title"] = Model.Title;
 }
-<h1 class="display-4">@ViewData["Title"]</h1>
+<h1 class="display-4">
+    <span>@ViewData["Title"]</span>
+    <small class="text-muted">
+        <form class="inline" method="post" asp-route="vote-up" asp-route-id="@Model.Id">
+            <a href="#" onclick="javascript: this.parentNode.submit(); return false;">+</a>
+        </form>
+        /
+        <form class="inline" method="post" asp-route="vote-down" asp-route-id="@Model.Id">
+            <a href="#" onclick="javascript: this.parentNode.submit(); return false;">-</a>
+        </form>
+    </small>
+</h1>
 <small class="text-muted">@Model.SubmissionTime, @Model.ViewNumber @tryPluralize(Model.ViewNumber, "view", "views"), @Model.VoteNumber @tryPluralize(Model.VoteNumber, "vote", "votes")</small>
 <p>@Model.Message</p>
 <h2 class="display-5">Answers</h2>
