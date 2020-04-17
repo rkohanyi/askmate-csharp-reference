@@ -49,7 +49,7 @@ namespace AskMateWebApp.Controllers
 
         [HttpGet]
         [Route("[controller]/Add/[action]/{id}", Name = "add-answer")]
-        public IActionResult Answer(int id)
+        public IActionResult Answer()
         {
             return View();
         }
