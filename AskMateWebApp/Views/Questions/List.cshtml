@@ -3,11 +3,11 @@
     ViewData["Title"] = "Questions";
 }
 <h1 class="display-4">@ViewData["Title"]</h1>
-<div class="text-muted">
-    Sort by title <a asp-route-sort="Title" asp-route-ascending="true">&utrif;</a>/<a asp-route-sort="Title" asp-route-ascending="false">&dtrif;</a>,
-    submission time <a asp-route-sort="SubmissionTime" asp-route-ascending="true">&utrif;</a>/<a asp-route-sort="SubmissionTime" asp-route-ascending="false">&dtrif;</a>
-    views <a asp-route-sort="ViewNumber" asp-route-ascending="true">&utrif;</a>/<a asp-route-sort="ViewNumber" asp-route-ascending="false">&dtrif;</a>
-    or votes <a asp-route-sort="VoteNumber" asp-route-ascending="true">&utrif;</a>/<a asp-route-sort="VoteNumber" asp-route-ascending="false">&dtrif;</a>
+<div class="sort-buttons text-muted">
+    Sort by title <a asp-route-sort="Title" asp-route-ascending="true" sort>&utrif;</a>/<a asp-route-sort="Title" asp-route-ascending="false" sort>&dtrif;</a>,
+    submission time <a asp-route-sort="SubmissionTime" asp-route-ascending="true" sort>&utrif;</a>/<a asp-route-sort="SubmissionTime" asp-route-ascending="false" sort>&dtrif;</a>
+    views <a asp-route-sort="ViewNumber" asp-route-ascending="true" sort>&utrif;</a>/<a asp-route-sort="ViewNumber" asp-route-ascending="false" sort>&dtrif;</a>
+    or votes <a asp-route-sort="VoteNumber" asp-route-ascending="true" sort>&utrif;</a>/<a asp-route-sort="VoteNumber" asp-route-ascending="false" sort>&dtrif;</a>
 </div>
 <div class="container">
     @foreach (var q in Model.Questions)

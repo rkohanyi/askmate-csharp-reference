@@ -74,3 +74,6 @@ body {
 .inline {
   display: inline;
 }
+.sort-buttons > a.active {
+  text-decoration: underline;
+}
