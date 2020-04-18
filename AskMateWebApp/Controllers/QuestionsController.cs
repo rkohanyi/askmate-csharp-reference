@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using AskMateWebApp.Models;
 using AskMateWebApp.Services;
+using AskMateWebApp.Domain;
 
 namespace AskMateWebApp.Controllers
 {
@@ -20,10 +21,15 @@ namespace AskMateWebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult List()
+        public IActionResult List(Question.SortField sort = Question.SortField.SubmissionTime, bool ascending = false)
         {
-            var questions = _questionsService.GetAll();
-            return View(questions.Select(x => new QuestionListItemModel(x)).ToList());
+            var questions = _questionsService.GetAll(sort, ascending);
+            return View(new QuestionListModel
+            {
+                SortField = sort,
+                Ascending = ascending,
+                Questions = questions.Select(x => new QuestionListItemModel(x)).ToList()
+            });
         }
 
         [HttpGet]

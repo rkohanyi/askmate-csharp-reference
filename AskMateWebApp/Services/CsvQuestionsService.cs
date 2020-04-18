@@ -27,11 +27,36 @@ namespace AskMateWebApp.Services
             updateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber, q.VoteNumber, title, message);
         }
 
+        public List<Question> GetAll(Question.SortField sort, bool ascending)
+        {
+            var all = readAllFrom()
+                .Select(toQuestion);
+
+            if (ascending)
+            {
+                all = all.OrderBy(x => Question.GetSortField(x, sort));
+            }
+            else
+            {
+                all = all.OrderByDescending(x => Question.GetSortField(x, sort));
+            }
+
+            return all.ToList();
+        }
+
+        public List<Question> GetAll(Question.SortField sort)
+        {
+            return GetAll(sort, false);
+        }
+
+        public List<Question> GetAll(bool ascending)
+        {
+            return GetAll(Question.SortField.SubmissionTime, ascending);
+        }
+
         public List<Question> GetAll()
         {
-            return readAllFrom()
-                .Select(toQuestion)
-                .ToList();
+            return GetAll(Question.SortField.SubmissionTime, false);
         }
 
         public Question GetOne(int id)

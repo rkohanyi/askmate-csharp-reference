@@ -30,7 +30,7 @@ namespace AskMateWebApp.Services
         {
             var answers = GetAll();
             int nextId = answers.Count == 0 ? 1 : answers.Select(x => x.Id).Max() + 1;
-            appendTo(nextId, questionId, message);
+            appendTo(nextId, questionId, DateTimeOffset.Now.ToUnixTimeSeconds(), 0, message);
             return nextId;
         }
 
@@ -57,7 +57,9 @@ namespace AskMateWebApp.Services
             {
                 Id = int.Parse(fields[0]),
                 QuestionId = int.Parse(fields[1]),
-                Message = fields[2]
+                SubmissionTime = DateTimeOffset.FromUnixTimeSeconds(int.Parse(fields[2])).LocalDateTime,
+                VoteNumber = int.Parse(fields[3]),
+                Message = fields[4]
             };
         }
     }

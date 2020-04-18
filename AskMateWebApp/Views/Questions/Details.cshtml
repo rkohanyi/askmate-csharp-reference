@@ -1,10 +1,4 @@
 @model QuestionDetailModel
-@functions {
-    private string tryPluralize(int count, string singular, string plural)
-    {
-        return count == 0 || count == 1 ? singular : plural;
-    }
-}
 @{
     ViewData["Title"] = Model.Title;
 }
@@ -25,7 +19,7 @@
         </form>
     </small>
 </h1>
-<small class="text-muted">@Model.SubmissionTime, @Model.ViewNumber @tryPluralize(Model.ViewNumber, "view", "views"), @Model.VoteNumber @tryPluralize(Model.VoteNumber, "vote", "votes")</small>
+<small class="text-muted">@Model.SubmissionTime, <pluralize singular="view" plural="views">@Model.ViewNumber</pluralize> <pluralize singular="vote" plural="votes">@Model.VoteNumber</pluralize></small>
 <p>@Model.Message</p>
 <h2 class="display-5">Answers</h2>
 @if (Model.Answers.Count == 0)
