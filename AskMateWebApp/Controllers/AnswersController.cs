@@ -21,5 +21,21 @@ namespace AskMateWebApp.Controllers
             _answersService.Delete(id);
             return Redirect(Request.Headers["Referer"]);
         }
+
+        [HttpPost]
+        [Route("[controller]/Vote/[action]/{id}", Name = "answer-vote-up")]
+        public IActionResult Up(int id)
+        {
+            _answersService.Vote(id, 1);
+            return Redirect(Request.Headers["Referer"]);
+        }
+
+        [HttpPost]
+        [Route("[controller]/Vote/[action]/{id}", Name = "answer-vote-down")]
+        public IActionResult Down(int id)
+        {
+            _answersService.Vote(id, -1);
+            return Redirect(Request.Headers["Referer"]);
+        }
     }
 }

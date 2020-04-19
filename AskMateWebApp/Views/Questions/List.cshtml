@@ -13,28 +13,37 @@
     @foreach (var q in Model.Questions)
     {
         <div class="row justify-content-between">
-            <div class="col-md-auto">
-                <form class="inline" method="post" asp-action="Delete" asp-route-id="@q.Id">
-                    <a href="#" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
-                </form>
-
+            <div class="col-12 col-md-auto">
                 <a asp-controller="Questions" asp-action="Details" asp-route-id="@q.Id">@q.Title</a>
             </div>
 
-            <div class="col-md-auto">
-                <pluralize class="inline" singular="view" plural="views">@q.ViewNumber</pluralize> and <pluralize class="inline" singular="vote" plural="votes">@q.VoteNumber</pluralize>
-
-                <span class="text-muted">@q.SubmissionTime.ToString("s")</span>
-
-                <form class="inline" method="post" asp-route="vote-up" asp-route-id="@q.Id">
-                    <a href="#" onclick="javascript: this.parentNode.submit(); return false;">&plus;</a>
-                </form>
-                /
-                <form class="inline" method="post" asp-route="vote-down" asp-route-id="@q.Id">
-                    <a href="#" onclick="javascript: this.parentNode.submit(); return false;">&minus;</a>
-                </form>
+            <div class="col-12 col-md-auto text-right">
+                <small>
+                    <span class="text-muted">@q.SubmissionTime</span>
+                    /
+                    <span class="text-muted">
+                        <pluralize singular="view" plural="views">@q.ViewNumber</pluralize>
+                    </span>
+                    /
+                    <span class="text-muted">
+                        <pluralize singular="vote" plural="votes">@q.VoteNumber</pluralize>
+                    </span>
+                    /
+                    <form class="inline" method="post" asp-route="question-vote-up" asp-route-id="@q.Id">
+                        <a asp-route="question-vote-up" asp-route-id="@q.Id" onclick="javascript: this.parentNode.submit(); return false;">&plus;</a>
+                    </form>
+                    /
+                    <form class="inline" method="post" asp-route="question-vote-down" asp-route-id="@q.Id">
+                        <a asp-route="question-vote-down" asp-route-id="@q.Id" onclick="javascript: this.parentNode.submit(); return false;">&minus;</a>
+                    </form>
+                    /
+                    <form class="inline" method="post" asp-action="Delete" asp-route-id="@q.Id" asp-route-redirect="/">
+                        <a href="#" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
+                    </form>
+                </small>
             </div>
         </div>
+        <hr />
     }
 </div>
 <div>

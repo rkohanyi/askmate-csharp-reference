@@ -88,7 +88,7 @@ namespace AskMateWebApp.Controllers
         }
 
         [HttpPost]
-        [Route("[controller]/Vote/[action]/{id}", Name = "vote-up")]
+        [Route("[controller]/Vote/[action]/{id}", Name = "question-vote-up")]
         public IActionResult Up(int id)
         {
             _questionsService.Vote(id, 1);
@@ -96,7 +96,7 @@ namespace AskMateWebApp.Controllers
         }
 
         [HttpPost]
-        [Route("[controller]/Vote/[action]/{id}", Name = "vote-down")]
+        [Route("[controller]/Vote/[action]/{id}", Name = "question-vote-down")]
         public IActionResult Down(int id)
         {
             _questionsService.Vote(id, -1);

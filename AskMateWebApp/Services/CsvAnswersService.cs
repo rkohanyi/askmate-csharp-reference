@@ -51,6 +51,12 @@ namespace AskMateWebApp.Services
                 .ToList();
         }
 
+        public void Vote(int id, int votes)
+        {
+            Answer a = ToAnswer(readFrom(id));
+            updateAt(id, a.Id, a.QuestionId, new DateTimeOffset(a.SubmissionTime).ToUnixTimeSeconds(), a.VoteNumber, a.Message);
+        }
+
         private Answer ToAnswer(string[] fields)
         {
             return new Answer
