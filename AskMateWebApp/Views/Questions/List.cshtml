@@ -44,7 +44,7 @@
                     </form>
                     /
                     <form class="inline" method="post" asp-action="Delete" asp-route-id="@q.Id" asp-route-redirect="/">
-                        <a href="#" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
+                        <a asp-action="Delete" asp-route-id="@q.Id" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
                     </form>
                 </small>
             </div>

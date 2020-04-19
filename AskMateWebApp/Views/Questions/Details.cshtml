@@ -26,7 +26,7 @@
     </form>
     /
     <form class="inline" method="post" asp-action="Delete" asp-route-id="@Model.Id" asp-route-redirect="/">
-        <a href="#" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
     </form>
 </small>
 <div class="card border-0">
@@ -98,7 +98,7 @@ else
                         </form>
                         /
                         <form class="inline" method="post" asp-controller="Answers" asp-action="Delete" asp-route-id="@a.Id">
-                            <a href="#" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
+                            <a asp-controller="Answers" asp-action="Delete" asp-route-id="@a.Id" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
                         </form>
                     </small>
                 </div>

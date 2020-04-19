@@ -82,7 +82,7 @@ namespace AskMateWebApp.Services
         public void Vote(int id, int votes)
         {
             Answer a = ToAnswer(ReadFrom(id));
-            UpdateAt(id, a.Id, a.QuestionId, new DateTimeOffset(a.SubmissionTime).ToUnixTimeSeconds(), a.VoteNumber + votes, a.Message);
+            UpdateAt(id, a.Id, a.QuestionId, new DateTimeOffset(a.SubmissionTime).ToUnixTimeSeconds(), a.VoteNumber + votes, a.Image, a.Message);
         }
 
         private Answer ToAnswer(string[] fields)
