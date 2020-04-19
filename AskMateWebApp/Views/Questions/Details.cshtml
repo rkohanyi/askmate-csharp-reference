@@ -5,6 +5,9 @@
 <h1 class="display-4">
     <span>@ViewData["Title"]</span>
 </h1>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit question</a>
+</div>
 <small>
     <span class="text-muted">@Model.SubmissionTime</span>
     /
@@ -31,6 +34,9 @@
 <p>@Model.Message</p>
 <hr />
 <h2 class="display-5">Answers</h2>
+<div>
+    <a asp-route="add-answer" asp-route-id="@Model.Id">Add answer</a>
+</div>
 <div class="sort-buttons">
     <small class="text-muted">
         Sort by submission time <a asp-route-sort="SubmissionTime" asp-route-ascending="true" sort>&utrif;</a>/<a asp-route-sort="SubmissionTime" asp-route-ascending="false" sort>&dtrif;</a>
@@ -79,5 +85,3 @@ else
         }
     </div>
 }
-<a asp-action="Edit" asp-route-id="@Model.Id">Edit question</a>
-<a asp-route="add-answer" asp-route-id="@Model.Id">Add answer</a>

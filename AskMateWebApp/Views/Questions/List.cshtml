@@ -3,6 +3,9 @@
     ViewData["Title"] = "Questions";
 }
 <h1 class="display-4">@ViewData["Title"]</h1>
+<div>
+    <a asp-controller="Questions" asp-action="Add">Add question</a>
+</div>
 <div class="sort-buttons">
     <small class="text-muted">
         Sort by title <a asp-route-sort="Title" asp-route-ascending="true" sort>&utrif;</a>/<a asp-route-sort="Title" asp-route-ascending="false" sort>&dtrif;</a>,
@@ -48,7 +51,4 @@
         </div>
         <hr />
     }
-</div>
-<div>
-    <a asp-controller="Questions" asp-action="Add">Add question</a>
 </div>
