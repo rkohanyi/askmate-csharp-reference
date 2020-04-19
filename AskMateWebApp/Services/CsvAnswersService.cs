@@ -16,7 +16,7 @@ namespace AskMateWebApp.Services
 
         public List<Answer> GetAll(int questionId, Answer.SortField sort, bool ascending)
         {
-            var all = readAllFrom()
+            var all = ReadAllFrom()
                 .Select(ToAnswer)
                 .Where(x => x.QuestionId == questionId);
 
@@ -49,7 +49,7 @@ namespace AskMateWebApp.Services
 
         public Answer GetOne(int id)
         {
-            return ToAnswer(readFrom(id));
+            return ToAnswer(ReadFrom(id));
         }
 
         public int Add(int questionId, string message)
@@ -57,31 +57,31 @@ namespace AskMateWebApp.Services
             // IMPORTANT: need to read *all* answers to determine the next ID to use.
             var answers = GetAll();
             int nextId = answers.Count == 0 ? 1 : answers.Select(x => x.Id).Max() + 1;
-            appendTo(nextId, questionId, DateTimeOffset.Now.ToUnixTimeSeconds(), 0, message);
+            AppendTo(nextId, questionId, DateTimeOffset.Now.ToUnixTimeSeconds(), 0, message);
             return nextId;
         }
 
         private List<Answer> GetAll()
         {
-            return readAllFrom()
+            return ReadAllFrom()
                 .Select(ToAnswer)
                 .ToList();
         }
 
         public void Delete(int id)
         {
-            deleteAt(id);
+            DeleteAt(id);
         }
 
         public void DeleteAll(int questionId)
         {
-            deleteAt(fields => !fields[1].Equals(questionId.ToString()));
+            DeleteAt(fields => !fields[1].Equals(questionId.ToString()));
         }
 
         public void Vote(int id, int votes)
         {
-            Answer a = ToAnswer(readFrom(id));
-            updateAt(id, a.Id, a.QuestionId, new DateTimeOffset(a.SubmissionTime).ToUnixTimeSeconds(), a.VoteNumber + votes, a.Message);
+            Answer a = ToAnswer(ReadFrom(id));
+            UpdateAt(id, a.Id, a.QuestionId, new DateTimeOffset(a.SubmissionTime).ToUnixTimeSeconds(), a.VoteNumber + votes, a.Message);
         }
 
         private Answer ToAnswer(string[] fields)

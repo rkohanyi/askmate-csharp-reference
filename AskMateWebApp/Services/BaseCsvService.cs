@@ -1,9 +1,7 @@
-using AskMateWebApp.Domain;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace AskMateWebApp.Services
 {
@@ -16,12 +14,12 @@ namespace AskMateWebApp.Services
         {
             _csvPath = csvPath;
         }
-        internal void appendTo(params object[] fields)
+        internal void AppendTo(params object[] fields)
         {
             File.AppendAllText(_csvPath, string.Join(_delimiter, fields) + Environment.NewLine);
         }
 
-        internal void updateAt(int id, params object[] fields)
+        internal void UpdateAt(int id, params object[] fields)
         {
             var lines = File.ReadAllLines(_csvPath).Select(line =>
             {
@@ -32,18 +30,18 @@ namespace AskMateWebApp.Services
             File.WriteAllLines(_csvPath, lines);
         }
 
-        internal void deleteAt(int id)
+        internal void DeleteAt(int id)
         {
-            deleteAt(fields => !fields[0].Equals(id.ToString()));
+            DeleteAt(fields => !fields[0].Equals(id.ToString()));
         }
 
-        internal void deleteAt(Func<string[], bool> predicate)
+        internal void DeleteAt(Func<string[], bool> predicate)
         {
             var lines = File.ReadAllLines(_csvPath).Where(line => predicate(line.Split(_delimiter)));
             File.WriteAllLines(_csvPath, lines);
         }
 
-        internal string[] readFrom(int id)
+        internal string[] ReadFrom(int id)
         {
             return File.ReadAllLines(_csvPath)
                 .Where(x => !string.IsNullOrWhiteSpace(x))
@@ -52,7 +50,7 @@ namespace AskMateWebApp.Services
                 .Single();
         }
 
-        internal List<string[]> readAllFrom()
+        internal List<string[]> ReadAllFrom()
         {
             return File.ReadAllLines(_csvPath)
                 .Where(x => !string.IsNullOrWhiteSpace(x))

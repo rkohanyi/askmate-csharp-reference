@@ -27,13 +27,13 @@ namespace AskMateWebApp.Services
                 using Stream outputStream = new FileStream(Path.Combine(_uploadsDirectory, imageFileName), FileMode.Create, FileAccess.Write);
                 imageStream.CopyTo(outputStream);
             }
-            appendTo(nextId, DateTimeOffset.Now.ToUnixTimeSeconds(), 0, 0, image, title, message);
+            AppendTo(nextId, DateTimeOffset.Now.ToUnixTimeSeconds(), 0, 0, image, title, message);
             return nextId;
         }
 
         public void Update(int id, string title, string message, string imageFileName, Stream imageStream)
         {
-            Question q = toQuestion(readFrom(id));
+            Question q = ToQuestion(ReadFrom(id));
             string image = q.Image;
             if (imageFileName != null || imageStream != null)
             {
@@ -41,13 +41,13 @@ namespace AskMateWebApp.Services
                 using Stream outputStream = new FileStream(Path.Combine(_uploadsDirectory, imageFileName), FileMode.Create, FileAccess.Write);
                 imageStream.CopyTo(outputStream);
             }
-            updateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber, q.VoteNumber, image, title, message);
+            UpdateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber, q.VoteNumber, image, title, message);
         }
 
         public List<Question> GetAll(Question.SortField sort, bool ascending)
         {
-            var all = readAllFrom()
-                .Select(toQuestion);
+            var all = ReadAllFrom()
+                .Select(ToQuestion);
 
             if (ascending)
             {
@@ -78,27 +78,27 @@ namespace AskMateWebApp.Services
 
         public Question GetOne(int id)
         {
-            return toQuestion(readFrom(id));
+            return ToQuestion(ReadFrom(id));
         }
 
         public void View(int id)
         {
-            Question q = toQuestion(readFrom(id));
-            updateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber + 1, q.VoteNumber, q.Image, q.Title, q.Message);
+            Question q = ToQuestion(ReadFrom(id));
+            UpdateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber + 1, q.VoteNumber, q.Image, q.Title, q.Message);
         }
 
         public void Vote(int id, int votes)
         {
-            Question q = toQuestion(readFrom(id));
-            updateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber, q.VoteNumber + votes, q.Image, q.Title, q.Message);
+            Question q = ToQuestion(ReadFrom(id));
+            UpdateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber, q.VoteNumber + votes, q.Image, q.Title, q.Message);
         }
 
         public void Delete(int id)
         {
-            deleteAt(id);
+            DeleteAt(id);
         }
 
-        private Question toQuestion(string[] fields)
+        private Question ToQuestion(string[] fields)
         {
             return new Question
             {
