@@ -29,11 +29,15 @@
         <a href="#" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
     </form>
 </small>
-<div class="container">
+<div class="card border-0">
     <div class="row">
-        <div class="col-8">@Model.Message</div>
-        <div class="col-md-auto">
-            <img src="@Model.Image" />
+        <div class="col-md-8">
+            <div class="card-body">
+                <p class="card-text">@Model.Message</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <img class="card-img" src="@Model.Image" />
         </div>
     </div>
 </div>
