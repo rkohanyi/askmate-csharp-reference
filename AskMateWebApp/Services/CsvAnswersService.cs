@@ -54,10 +54,18 @@ namespace AskMateWebApp.Services
 
         public int Add(int questionId, string message)
         {
-            var answers = GetAll(questionId);
+            // IMPORTANT: need to read *all* answers to determine the next ID to use.
+            var answers = GetAll();
             int nextId = answers.Count == 0 ? 1 : answers.Select(x => x.Id).Max() + 1;
             appendTo(nextId, questionId, DateTimeOffset.Now.ToUnixTimeSeconds(), 0, message);
             return nextId;
+        }
+
+        private List<Answer> GetAll()
+        {
+            return readAllFrom()
+                .Select(ToAnswer)
+                .ToList();
         }
 
         public void Delete(int id)
