@@ -33,10 +33,10 @@ namespace AskMateWebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult Details(int id)
+        public IActionResult Details(int id, Answer.SortField sort = AskMateWebApp.Domain.Answer.SortField.SubmissionTime, bool ascending = false)
         {
             var question = _questionsService.GetOne(id);
-            var answers = _answersService.GetAll(id);
+            var answers = _answersService.GetAll(id, sort, ascending);
             _questionsService.View(id);
             return View(new QuestionDetailModel(question, answers));
         }

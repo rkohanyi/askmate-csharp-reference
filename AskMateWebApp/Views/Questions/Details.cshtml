@@ -31,6 +31,13 @@
 <p>@Model.Message</p>
 <hr />
 <h2 class="display-5">Answers</h2>
+<div class="sort-buttons">
+    <small class="text-muted">
+        Sort by submission time <a asp-route-sort="SubmissionTime" asp-route-ascending="true" sort>&utrif;</a>/<a asp-route-sort="SubmissionTime" asp-route-ascending="false" sort>&dtrif;</a>
+        or votes <a asp-route-sort="VoteNumber" asp-route-ascending="true" sort>&utrif;</a>/<a asp-route-sort="VoteNumber" asp-route-ascending="false" sort>&dtrif;</a>
+    </small>
+</div>
+<hr />
 @if (Model.Answers.Count == 0)
 {
     <p class="text-muted">No answers yet</p>

@@ -14,11 +14,37 @@ namespace AskMateWebApp.Services
         {
         }
 
+        public List<Answer> GetAll(int questionId, Answer.SortField sort, bool ascending)
+        {
+            var all = readAllFrom()
+                .Select(ToAnswer)
+                .Where(x => x.QuestionId == questionId);
+
+            if (ascending)
+            {
+                all = all.OrderBy(x => Answer.GetSortField(x, sort));
+            }
+            else
+            {
+                all = all.OrderByDescending(x => Answer.GetSortField(x, sort));
+            }
+
+            return all.ToList();
+        }
+
+        public List<Answer> GetAll(int questionId, Answer.SortField sort)
+        {
+            return GetAll(questionId, sort, false);
+        }
+
+        public List<Answer> GetAll(int questionId, bool ascending)
+        {
+            return GetAll(questionId, Answer.SortField.SubmissionTime, ascending);
+        }
+
         public List<Answer> GetAll(int questionId)
         {
-            return GetAll()
-                .Where(x => x.QuestionId == questionId)
-                .ToList();
+            return GetAll(questionId, Answer.SortField.SubmissionTime, false);
         }
 
         public Answer GetOne(int id)
@@ -28,7 +54,7 @@ namespace AskMateWebApp.Services
 
         public int Add(int questionId, string message)
         {
-            var answers = GetAll();
+            var answers = GetAll(questionId);
             int nextId = answers.Count == 0 ? 1 : answers.Select(x => x.Id).Max() + 1;
             appendTo(nextId, questionId, DateTimeOffset.Now.ToUnixTimeSeconds(), 0, message);
             return nextId;
@@ -42,13 +68,6 @@ namespace AskMateWebApp.Services
         public void DeleteAll(int questionId)
         {
             deleteAt(fields => !fields[1].Equals(questionId.ToString()));
-        }
-
-        private List<Answer> GetAll()
-        {
-            return readAllFrom()
-                .Select(ToAnswer)
-                .ToList();
         }
 
         public void Vote(int id, int votes)
