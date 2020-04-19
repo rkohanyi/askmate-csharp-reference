@@ -1,7 +1,6 @@
 @model QuestionDetailModel
 @{
     ViewData["Title"] = Model.Title;
-    Random random = new Random();
 }
 <h1 class="display-4">@Model.Title</h1>
 <div>
@@ -40,7 +39,7 @@
         @if (!string.IsNullOrEmpty(Model.Image))
         {
             <div class="col-md-4">
-                <img class="card-img" src="@(Model.Image.StartsWith("http") ? Model.Image + "?random=" + random.Next(0, int.MaxValue) : "/uploads/" + Model.Image)" />
+                <img class="card-img" src="/uploads/@Model.Image" />
             </div>
         }
     </div>
@@ -73,10 +72,10 @@ else
                             <p class="card-text">@a.Message</p>
                         </div>
                     </div>
-                    @if (!string.IsNullOrEmpty(Model.Image))
+                    @if (!string.IsNullOrEmpty(a.Image))
                     {
                         <div class="col-md-4">
-                            <img class="card-img" src="@(Model.Image.StartsWith("http") ? Model.Image + "?random=" + random.Next(0, int.MaxValue) : "/uploads/" + Model.Image)" />
+                            <img class="card-img" src="/uploads/@a.Image" />
                         </div>
                     }
                 </div>
