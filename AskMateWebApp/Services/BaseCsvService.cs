@@ -9,14 +9,28 @@ namespace AskMateWebApp.Services
     {
         private readonly string _delimiter = ";";
         private readonly string _csvPath;
+        private readonly string _uploadsDirectory;
 
-        internal BaseCsvService(string csvPath)
+        internal BaseCsvService(string csvPath, string uploadsDirectory)
         {
             _csvPath = csvPath;
+            _uploadsDirectory = uploadsDirectory;
         }
+
         internal void AppendTo(params object[] fields)
         {
             File.AppendAllText(_csvPath, string.Join(_delimiter, fields) + Environment.NewLine);
+        }
+
+        internal string SaveTo(string imageFileName, Stream imageStream)
+        {
+            if (imageFileName != null || imageStream != null)
+            {
+                using Stream outputStream = new FileStream(Path.Combine(_uploadsDirectory, imageFileName), FileMode.Create, FileAccess.Write);
+                imageStream.CopyTo(outputStream);
+                return imageFileName;
+            }
+            return null;
         }
 
         internal void UpdateAt(int id, params object[] fields)

@@ -10,7 +10,7 @@ namespace AskMateWebApp.Services
 {
     public class CsvAnswersService : BaseCsvService, IAnswersService
     {
-        public CsvAnswersService(string csvPath) : base(csvPath)
+        public CsvAnswersService(string csvPath, string uploadsDirectory) : base(csvPath, uploadsDirectory)
         {
         }
 
@@ -52,12 +52,13 @@ namespace AskMateWebApp.Services
             return ToAnswer(ReadFrom(id));
         }
 
-        public int Add(int questionId, string message)
+        public int Add(int questionId, string message, string imageFileName, Stream imageStream)
         {
             // IMPORTANT: need to read *all* answers to determine the next ID to use.
             var answers = GetAll();
             int nextId = answers.Count == 0 ? 1 : answers.Select(x => x.Id).Max() + 1;
-            AppendTo(nextId, questionId, DateTimeOffset.Now.ToUnixTimeSeconds(), 0, message);
+            string image = SaveTo(imageFileName, imageStream) ?? "";
+            AppendTo(nextId, questionId, DateTimeOffset.Now.ToUnixTimeSeconds(), 0, image, message);
             return nextId;
         }
 
@@ -92,7 +93,8 @@ namespace AskMateWebApp.Services
                 QuestionId = int.Parse(fields[1]),
                 SubmissionTime = DateTimeOffset.FromUnixTimeSeconds(int.Parse(fields[2])).LocalDateTime,
                 VoteNumber = int.Parse(fields[3]),
-                Message = fields[4]
+                Image = fields[4],
+                Message = fields[5]
             };
         }
     }

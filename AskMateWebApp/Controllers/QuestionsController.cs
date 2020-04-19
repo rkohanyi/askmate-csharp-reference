@@ -92,7 +92,9 @@ namespace AskMateWebApp.Controllers
         [Route("[controller]/Add/[action]/{id}", Name = "add-answer")]
         public IActionResult Answer(int id, AddAnswerModel newAnswer)
         {
-            _answersService.Add(id, newAnswer.Message);
+            using Stream imageStream = newAnswer.Image?.OpenReadStream();
+            string imageFileName = newAnswer.Image?.FileName;
+            _answersService.Add(id, newAnswer.Message, imageFileName, imageStream);
             return RedirectToAction("Details", new { id });
         }
 

@@ -35,7 +35,7 @@ namespace AskMateWebApp
         {
             services.AddControllersWithViews();
             services.AddSingleton(typeof(IQuestionsService), new CsvQuestionsService("questions.csv", uploadsDirectory));
-            services.AddSingleton(typeof(IAnswersService), new CsvAnswersService("answers.csv"));
+            services.AddSingleton(typeof(IAnswersService), new CsvAnswersService("answers.csv", uploadsDirectory));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
