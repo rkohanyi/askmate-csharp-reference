@@ -3,7 +3,7 @@
     ViewData["Title"] = "Edit Question";
 }
 <h1 class="display-4">@ViewData["Title"]</h1>
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label asp-for="Title"></label>
         <input asp-for="Title" value="@Model.Title" class="form-control" />
@@ -11,6 +11,10 @@
     <div class="form-group">
         <label asp-for="Message"></label>
         <textarea asp-for="Message" class="form-control">@Model.Message</textarea>
+    </div>
+    <div class="form-group">
+        <label asp-for="Image"></label>
+        <input type="file" class="form-control-file" asp-for="Image">
     </div>
     <input type="submit" value="Save" class="btn btn-primary" />
 </form>

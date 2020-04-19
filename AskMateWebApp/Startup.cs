@@ -1,17 +1,31 @@
+using AskMateWebApp.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
-using AskMateWebApp.Services;
+using System;
+using System.IO;
 
 namespace AskMateWebApp
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly string uploadsDirectory;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             Configuration = configuration;
+            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("UPLOADS_DIRECTORY")))
+            {
+                uploadsDirectory = Path.Combine(webHostEnvironment.WebRootPath, "uploads");
+            }
+            else
+            {
+                uploadsDirectory = Path.Combine(Environment.GetEnvironmentVariable("UPLOADS_DIRECTORY"), "uploads");
+            }
+            Directory.CreateDirectory(uploadsDirectory);
         }
 
         public IConfiguration Configuration { get; }
@@ -20,7 +34,7 @@ namespace AskMateWebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddSingleton(typeof(IQuestionsService), new CsvQuestionsService("questions.csv"));
+            services.AddSingleton(typeof(IQuestionsService), new CsvQuestionsService("questions.csv", uploadsDirectory));
             services.AddSingleton(typeof(IAnswersService), new CsvAnswersService("answers.csv"));
         }
 
@@ -39,6 +53,12 @@ namespace AskMateWebApp
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(uploadsDirectory),
+                RequestPath = "/uploads"
+            });
 
             app.UseRouting();
 

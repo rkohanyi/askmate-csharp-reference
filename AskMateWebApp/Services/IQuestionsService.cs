@@ -1,5 +1,6 @@
 using AskMateWebApp.Domain;
 using System.Collections.Generic;
+using System.IO;
 
 namespace AskMateWebApp.Services
 {
@@ -10,8 +11,8 @@ namespace AskMateWebApp.Services
         List<Question> GetAll(Question.SortField sort);
         List<Question> GetAll(Question.SortField sort, bool ascending);
         Question GetOne(int id);
-        int Add(string title, string message);
-        void Update(int id, string title, string message);
+        int Add(string title, string message, string imageFileName, Stream imageStream);
+        void Update(int id, string title, string message, string imageFileName, Stream imageStream);
         void View(int id);
         void Vote(int id, int votes);
         void Delete(int id);

@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging;
 using AskMateWebApp.Models;
 using AskMateWebApp.Services;
 using AskMateWebApp.Domain;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace AskMateWebApp.Controllers
 {
@@ -13,7 +15,10 @@ namespace AskMateWebApp.Controllers
         private readonly IQuestionsService _questionsService;
         private readonly IAnswersService _answersService;
 
-        public QuestionsController(ILogger<QuestionsController> logger, IQuestionsService questionsService, IAnswersService answerService)
+        public QuestionsController(
+            ILogger<QuestionsController> logger,
+            IQuestionsService questionsService,
+            IAnswersService answerService)
         {
             _logger = logger;
             _questionsService = questionsService;
@@ -50,7 +55,9 @@ namespace AskMateWebApp.Controllers
         [HttpPost]
         public IActionResult Add(AddQuestionModel newQuestion)
         {
-            int id = _questionsService.Add(newQuestion.Title, newQuestion.Message);
+            using Stream imageStream = newQuestion.Image?.OpenReadStream();
+            string imageFileName = newQuestion.Image?.FileName;
+            int id = _questionsService.Add(newQuestion.Title, newQuestion.Message, imageFileName, imageStream);
             return RedirectToAction("Details", new { id });
         }
 
@@ -68,7 +75,9 @@ namespace AskMateWebApp.Controllers
         [HttpPost]
         public IActionResult Edit(int id, AddQuestionModel newQuestion)
         {
-            _questionsService.Update(id, newQuestion.Title, newQuestion.Message);
+            using Stream imageStream = newQuestion.Image?.OpenReadStream();
+            string imageFileName = newQuestion.Image?.FileName;
+            _questionsService.Update(id, newQuestion.Title, newQuestion.Message, imageFileName, imageStream);
             return RedirectToAction("Details", new { id });
         }
 

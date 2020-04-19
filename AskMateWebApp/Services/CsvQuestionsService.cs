@@ -9,22 +9,39 @@ namespace AskMateWebApp.Services
 {
     public class CsvQuestionsService : BaseCsvService, IQuestionsService
     {
-        public CsvQuestionsService(string csvPath) : base(csvPath)
+        private readonly string _uploadsDirectory;
+
+        public CsvQuestionsService(string csvPath, string uploadsDirectory) : base(csvPath)
         {
+            _uploadsDirectory = uploadsDirectory;
         }
 
-        public int Add(string title, string message)
+        public int Add(string title, string message, string imageFileName, Stream imageStream)
         {
             var questions = GetAll();
             int nextId = questions.Count == 0 ? 1 : questions.Select(x => x.Id).Max() + 1;
-            appendTo(nextId, DateTimeOffset.Now.ToUnixTimeSeconds(), 0, 0, "http://picsum.photos/300/200", title, message);
+            string image = "";
+            if (imageFileName != null || imageStream != null)
+            {
+                image = imageFileName;
+                using Stream outputStream = new FileStream(Path.Combine(_uploadsDirectory, imageFileName), FileMode.Create, FileAccess.Write);
+                imageStream.CopyTo(outputStream);
+            }
+            appendTo(nextId, DateTimeOffset.Now.ToUnixTimeSeconds(), 0, 0, image, title, message);
             return nextId;
         }
 
-        public void Update(int id, string title, string message)
+        public void Update(int id, string title, string message, string imageFileName, Stream imageStream)
         {
             Question q = toQuestion(readFrom(id));
-            updateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber, q.VoteNumber, q.Image, title, message);
+            string image = q.Image;
+            if (imageFileName != null || imageStream != null)
+            {
+                image = imageFileName;
+                using Stream outputStream = new FileStream(Path.Combine(_uploadsDirectory, imageFileName), FileMode.Create, FileAccess.Write);
+                imageStream.CopyTo(outputStream);
+            }
+            updateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber, q.VoteNumber, image, title, message);
         }
 
         public List<Question> GetAll(Question.SortField sort, bool ascending)
