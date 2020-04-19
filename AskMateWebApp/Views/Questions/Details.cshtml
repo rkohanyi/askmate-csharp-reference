@@ -2,9 +2,7 @@
 @{
     ViewData["Title"] = Model.Title;
 }
-<h1 class="display-4">
-    <span>@ViewData["Title"]</span>
-</h1>
+<h1 class="display-4">@Model.Title</h1>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit question</a>
 </div>
@@ -31,7 +29,14 @@
         <a href="#" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
     </form>
 </small>
-<p>@Model.Message</p>
+<div class="container">
+    <div class="row">
+        <div class="col-8">@Model.Message</div>
+        <div class="col-md-auto">
+            <img src="@Model.Image" />
+        </div>
+    </div>
+</div>
 <hr />
 <h2 class="display-5">Answers</h2>
 <div>

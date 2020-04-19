@@ -13,6 +13,7 @@ namespace AskMateWebApp.Models
         public int VoteNumber { get; set; }
         public string Title { get; set; }
         public string Message { get; set; }
+        public string Image { get; set; }
         public List<Answer> Answers { get; set; }
 
         public QuestionDetailModel(Question question, List<Answer> answers)
@@ -23,6 +24,7 @@ namespace AskMateWebApp.Models
             VoteNumber = question.VoteNumber;
             Title = question.Title;
             Message = question.Message;
+            Image = question.Image;
             Answers = answers;
         }
     }

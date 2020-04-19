@@ -17,14 +17,14 @@ namespace AskMateWebApp.Services
         {
             var questions = GetAll();
             int nextId = questions.Count == 0 ? 1 : questions.Select(x => x.Id).Max() + 1;
-            appendTo(nextId, DateTimeOffset.Now.ToUnixTimeSeconds(), 0, 0, title, message);
+            appendTo(nextId, DateTimeOffset.Now.ToUnixTimeSeconds(), 0, 0, "http://picsum.photos/300/200", title, message);
             return nextId;
         }
 
         public void Update(int id, string title, string message)
         {
             Question q = toQuestion(readFrom(id));
-            updateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber, q.VoteNumber, title, message);
+            updateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber, q.VoteNumber, q.Image, title, message);
         }
 
         public List<Question> GetAll(Question.SortField sort, bool ascending)
@@ -67,13 +67,13 @@ namespace AskMateWebApp.Services
         public void View(int id)
         {
             Question q = toQuestion(readFrom(id));
-            updateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber + 1, q.VoteNumber, q.Title, q.Message);
+            updateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber + 1, q.VoteNumber, q.Image, q.Title, q.Message);
         }
 
         public void Vote(int id, int votes)
         {
             Question q = toQuestion(readFrom(id));
-            updateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber, q.VoteNumber + votes, q.Title, q.Message);
+            updateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber, q.VoteNumber + votes, q.Image, q.Title, q.Message);
         }
 
         public void Delete(int id)
@@ -89,8 +89,9 @@ namespace AskMateWebApp.Services
                 SubmissionTime = DateTimeOffset.FromUnixTimeSeconds(int.Parse(fields[1])).LocalDateTime,
                 ViewNumber = int.Parse(fields[2]),
                 VoteNumber = int.Parse(fields[3]),
-                Title = fields[4],
-                Message = fields[5]
+                Image = fields[4],
+                Title = fields[5],
+                Message = fields[6]
             };
         }
     }
