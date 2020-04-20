@@ -1,16 +1,13 @@
 using AskMateWebApp.Domain;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace AskMateWebApp.Services
 {
     public class CsvAnswersService : BaseCsvService, IAnswersService
     {
-        public CsvAnswersService(string csvPath, string uploadsDirectory) : base(csvPath, uploadsDirectory)
+        public CsvAnswersService(string csvPath) : base(csvPath)
         {
         }
 
@@ -52,20 +49,18 @@ namespace AskMateWebApp.Services
             return ToAnswer(ReadFrom(id));
         }
 
-        public int Add(int questionId, string message, string imageFileName, Stream imageStream)
+        public int Add(int questionId, string message, string image)
         {
             // IMPORTANT: need to read *all* answers to determine the next ID to use.
             var answers = GetAll();
             int nextId = answers.Count == 0 ? 1 : answers.Select(x => x.Id).Max() + 1;
-            string image = SaveTo(imageFileName, imageStream) ?? "";
             AppendTo(nextId, questionId, DateTimeOffset.Now.ToUnixTimeSeconds(), 0, image, message);
             return nextId;
         }
 
-        public void Update(int id, string message, string imageFileName, Stream imageStream)
+        public void Update(int id, string message, string image)
         {
             Answer a = ToAnswer(ReadFrom(id));
-            string image = SaveTo(imageFileName, imageStream) ?? a.Image;
             UpdateAt(id, a.Id, a.QuestionId, new DateTimeOffset(a.SubmissionTime).ToUnixTimeSeconds(), a.VoteNumber, image, message);
         }
 

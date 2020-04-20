@@ -12,15 +12,18 @@ namespace AskMateWebApp.Controllers
     public class QuestionsController : Controller
     {
         private readonly ILogger<QuestionsController> _logger;
+        private readonly IStorageService _storageService;
         private readonly IQuestionsService _questionsService;
         private readonly IAnswersService _answersService;
 
         public QuestionsController(
             ILogger<QuestionsController> logger,
+            IStorageService storageService,
             IQuestionsService questionsService,
             IAnswersService answerService)
         {
             _logger = logger;
+            _storageService = storageService;
             _questionsService = questionsService;
             _answersService = answerService;
         }
@@ -55,9 +58,10 @@ namespace AskMateWebApp.Controllers
         [HttpPost]
         public IActionResult Add(AddQuestionModel newQuestion)
         {
-            using Stream imageStream = newQuestion.Image?.OpenReadStream();
             string imageFileName = newQuestion.Image?.FileName;
-            int id = _questionsService.Add(newQuestion.Title, newQuestion.Message, imageFileName, imageStream);
+            using Stream imageStream = newQuestion.Image?.OpenReadStream();
+            string image = imageFileName == null ? null : _storageService.Save(imageFileName, imageStream);
+            int id = _questionsService.Add(newQuestion.Title, newQuestion.Message, image);
             return RedirectToAction("Details", new { id });
         }
 
@@ -75,9 +79,10 @@ namespace AskMateWebApp.Controllers
         [HttpPost]
         public IActionResult Edit(int id, AddQuestionModel newQuestion)
         {
-            using Stream imageStream = newQuestion.Image?.OpenReadStream();
             string imageFileName = newQuestion.Image?.FileName;
-            _questionsService.Update(id, newQuestion.Title, newQuestion.Message, imageFileName, imageStream);
+            using Stream imageStream = newQuestion.Image?.OpenReadStream();
+            string image = imageFileName == null ? null : _storageService.Save(imageFileName, imageStream);
+            _questionsService.Update(id, newQuestion.Title, newQuestion.Message, image);
             return RedirectToAction("Details", new { id });
         }
 
@@ -92,9 +97,10 @@ namespace AskMateWebApp.Controllers
         [Route("[controller]/Add/[action]/{id}", Name = "add-answer")]
         public IActionResult Answer(int id, AddAnswerModel newAnswer)
         {
-            using Stream imageStream = newAnswer.Image?.OpenReadStream();
             string imageFileName = newAnswer.Image?.FileName;
-            _answersService.Add(id, newAnswer.Message, imageFileName, imageStream);
+            using Stream imageStream = newAnswer.Image?.OpenReadStream();
+            string image = imageFileName == null ? null : _storageService.Save(imageFileName, imageStream);
+            _answersService.Add(id, newAnswer.Message, image);
             return RedirectToAction("Details", new { id });
         }
 

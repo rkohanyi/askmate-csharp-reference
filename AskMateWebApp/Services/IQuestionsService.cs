@@ -11,8 +11,8 @@ namespace AskMateWebApp.Services
         List<Question> GetAll(Question.SortField sort);
         List<Question> GetAll(Question.SortField sort, bool ascending);
         Question GetOne(int id);
-        int Add(string title, string message, string imageFileName, Stream imageStream);
-        void Update(int id, string title, string message, string imageFileName, Stream imageStream);
+        int Add(string title, string message, string image);
+        void Update(int id, string title, string message, string image);
         void View(int id);
         void Vote(int id, int votes);
         void Delete(int id);

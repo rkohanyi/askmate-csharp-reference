@@ -1,32 +1,28 @@
 using AskMateWebApp.Domain;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace AskMateWebApp.Services
 {
     public class CsvQuestionsService : BaseCsvService, IQuestionsService
     {
-        public CsvQuestionsService(string csvPath, string uploadsDirectory) : base(csvPath, uploadsDirectory)
+        public CsvQuestionsService(string csvPath) : base(csvPath)
         {
         }
 
-        public int Add(string title, string message, string imageFileName, Stream imageStream)
+        public int Add(string title, string message, string image)
         {
             var questions = GetAll();
             int nextId = questions.Count == 0 ? 1 : questions.Select(x => x.Id).Max() + 1;
-            string image = SaveTo(imageFileName, imageStream) ?? "";
-            AppendTo(nextId, DateTimeOffset.Now.ToUnixTimeSeconds(), 0, 0, image, title, message);
+            AppendTo(nextId, DateTimeOffset.Now.ToUnixTimeSeconds(), 0, 0, image ?? "", title, message);
             return nextId;
         }
 
-        public void Update(int id, string title, string message, string imageFileName, Stream imageStream)
+        public void Update(int id, string title, string message, string image)
         {
             Question q = ToQuestion(ReadFrom(id));
-            string image = SaveTo(imageFileName, imageStream) ?? q.Image;
-            UpdateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber, q.VoteNumber, image, title, message);
+            UpdateAt(id, q.Id, new DateTimeOffset(q.SubmissionTime).ToUnixTimeSeconds(), q.ViewNumber, q.VoteNumber, image ?? q.Image, title, message);
         }
 
         public List<Question> GetAll(Question.SortField sort, bool ascending)

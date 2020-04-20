@@ -9,11 +9,13 @@ namespace AskMateWebApp.Controllers
     public class AnswersController : Controller
     {
         private readonly ILogger<AnswersController> _logger;
+        private readonly IStorageService _storageService;
         private readonly IAnswersService _answersService;
 
-        public AnswersController(ILogger<AnswersController> logger, IAnswersService answerService)
+        public AnswersController(ILogger<AnswersController> logger, IStorageService storageService, IAnswersService answerService)
         {
             _logger = logger;
+            _storageService = storageService;
             _answersService = answerService;
         }
 
@@ -31,9 +33,10 @@ namespace AskMateWebApp.Controllers
         [HttpPost]
         public IActionResult Edit(int id, AddAnswerModel newAnswer)
         {
-            using Stream imageStream = newAnswer.Image?.OpenReadStream();
             string imageFileName = newAnswer.Image?.FileName;
-            _answersService.Update(id, newAnswer.Message, imageFileName, imageStream);
+            using Stream imageStream = newAnswer.Image?.OpenReadStream();
+            string image = imageFileName == null ? null : _storageService.Save(imageFileName, imageStream);
+            _answersService.Update(id, newAnswer.Message, image);
             return RedirectToAction("Details", "Questions", new { id = newAnswer.QuestionId });
         }
 
