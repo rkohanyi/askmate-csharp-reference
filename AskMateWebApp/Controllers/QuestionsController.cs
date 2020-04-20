@@ -123,8 +123,20 @@ namespace AskMateWebApp.Controllers
         [HttpPost]
         public IActionResult Delete(int id, string redirect)
         {
-            _questionsService.Delete(id);
+            Question q = _questionsService.GetOne(id);
+            foreach (var a in _answersService.GetAll(q.Id))
+            {
+                if (!string.IsNullOrEmpty(a.Image))
+                {
+                    _storageService.Delete(a.Image);
+                }
+            }
+            if (!string.IsNullOrEmpty(q.Image))
+            {
+                _storageService.Delete(q.Image);
+            }
             _answersService.DeleteAll(id);
+            _questionsService.Delete(q.Id);
             if (redirect == null)
             {
                 return Redirect(Request.Headers["Referer"]);

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using AskMateWebApp.Services;
 using AskMateWebApp.Models;
 using System.IO;
+using AskMateWebApp.Domain;
 
 namespace AskMateWebApp.Controllers
 {
@@ -43,7 +44,12 @@ namespace AskMateWebApp.Controllers
         [HttpPost]
         public IActionResult Delete(int id)
         {
-            _answersService.Delete(id);
+            Answer a = _answersService.GetOne(id);
+            if (!string.IsNullOrEmpty(a.Image))
+            {
+                _storageService.Delete(a.Image);
+            }
+            _answersService.Delete(a.Id);
             return Redirect(Request.Headers["Referer"]);
         }
 
