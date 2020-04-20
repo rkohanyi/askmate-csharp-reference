@@ -62,6 +62,13 @@ namespace AskMateWebApp.Services
             return nextId;
         }
 
+        public void Update(int id, string message, string imageFileName, Stream imageStream)
+        {
+            Answer a = ToAnswer(ReadFrom(id));
+            string image = SaveTo(imageFileName, imageStream) ?? a.Image;
+            UpdateAt(id, a.Id, a.QuestionId, new DateTimeOffset(a.SubmissionTime).ToUnixTimeSeconds(), a.VoteNumber, image, message);
+        }
+
         private List<Answer> GetAll()
         {
             return ReadAllFrom()

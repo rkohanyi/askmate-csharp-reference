@@ -1,0 +1,17 @@
+@model AddAnswerModel
+@{
+    ViewData["Title"] = "Edit Answer";
+}
+<h1 class="display-4">@ViewData["Title"]</h1>
+<form method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="QuestionId">
+    <div class="form-group">
+        <label asp-for="Message"></label>
+        <textarea asp-for="Message" class="form-control">@Model.Message</textarea>
+    </div>
+    <div class="form-group">
+        <label asp-for="Image"></label>
+        <input type="file" class="form-control-file" asp-for="Image">
+    </div>
+    <input type="submit" value="Save" class="btn btn-primary">
+</form>

@@ -70,6 +70,7 @@ else
                     <div class="@(string.IsNullOrEmpty(a.Image) ? "col-md-12" : "col-md-8")">
                         <div class="card-body">
                             <p class="card-text">@a.Message</p>
+                            <a asp-controller="Answers" asp-action="Edit" asp-route-id="@a.Id">Edit answer</a>
                         </div>
                     </div>
                     @if (!string.IsNullOrEmpty(a.Image))
