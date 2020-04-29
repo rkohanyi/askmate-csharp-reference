@@ -107,7 +107,7 @@ namespace AskMateWebApp.Services
             param.ParameterName = "questionId";
             param.Value = questionId;
 
-            command.CommandText = $"SELECT * FROM answer WHERE question_id = @questionId ORDER BY {sort.ToString().ToCamelCase()} {(ascending ? "ASC" : "DESC")}";
+            command.CommandText = $"SELECT * FROM answer WHERE question_id = @questionId ORDER BY {sort.ToString().ToSnakeCase()} {(ascending ? "ASC" : "DESC")}";
             command.Parameters.Add(param);
 
             using var reader = command.ExecuteReader();

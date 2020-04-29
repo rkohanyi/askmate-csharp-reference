@@ -89,7 +89,7 @@ namespace AskMateWebApp.Services
         public List<Question> GetAll(Question.SortField sort, bool ascending)
         {
             using var command = _connection.CreateCommand();
-            command.CommandText = $"SELECT * FROM question ORDER BY {sort.ToString().ToCamelCase()} {(ascending ? "ASC" : "DESC")}";
+            command.CommandText = $"SELECT * FROM question ORDER BY {sort.ToString().ToSnakeCase()} {(ascending ? "ASC" : "DESC")}";
 
             using var reader = command.ExecuteReader();
             List<Question> questions = new List<Question>();
