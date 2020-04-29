@@ -5,7 +5,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Npgsql;
 using System;
+using System.Data;
 using System.IO;
 
 namespace AskMateWebApp
@@ -13,19 +15,26 @@ namespace AskMateWebApp
     public class Startup
     {
         private readonly string uploadsDirectory;
+        private readonly string connectionString;
 
         public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             Configuration = configuration;
-            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("UPLOADS_DIRECTORY")))
-            {
-                uploadsDirectory = Path.Combine(webHostEnvironment.WebRootPath, "uploads");
-            }
-            else
-            {
-                uploadsDirectory = Path.Combine(Environment.GetEnvironmentVariable("UPLOADS_DIRECTORY"), "uploads");
-            }
+            uploadsDirectory = InitUploadsDirectory(webHostEnvironment);
+            connectionString = InitConnectionString();
+        }
+
+        private string InitUploadsDirectory(IWebHostEnvironment webHostEnvironment)
+        {
+            string uploadsDirectory = Path.Combine(Environment.GetEnvironmentVariable("UPLOADS_DIRECTORY") ?? webHostEnvironment.WebRootPath, "uploads");
             Directory.CreateDirectory(uploadsDirectory);
+            return uploadsDirectory;
+        }
+
+        private string InitConnectionString()
+        {
+            string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? "Host=localhost;Username=postgres;Password=admin;Database=test";
+            return connectionString;
         }
 
         public IConfiguration Configuration { get; }
@@ -34,9 +43,15 @@ namespace AskMateWebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddTransient<IDbConnection>(_ =>
+            {
+                var connection = new NpgsqlConnection(connectionString);
+                connection.Open();
+                return connection;
+            });
+            services.AddScoped<IQuestionsService, SqlQuestionsService>();
+            services.AddScoped<IAnswersService, SqlAnswersService>();
             services.AddSingleton(typeof(IStorageService), new FileStorageService(uploadsDirectory));
-            services.AddSingleton(typeof(IQuestionsService), new CsvQuestionsService("questions.csv"));
-            services.AddSingleton(typeof(IAnswersService), new CsvAnswersService("answers.csv"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

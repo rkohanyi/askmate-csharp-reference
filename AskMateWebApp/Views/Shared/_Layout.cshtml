@@ -19,8 +19,15 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Questions" asp-action="List">Questions</a>
+                            <a class="nav-link text-dark" asp-controller="Questions" asp-action="List">Questions</a>
                         </li>
+                        <environment names="Development">
+                            <li class="nav-item">
+                                <form class="inline" method="post" asp-controller="Database" asp-action="Reset">
+                                    <a class="nav-link text-danger" asp-controller="Database" asp-action="Reset" onclick="javascript: this.parentNode.submit(); return false;">Reset</a>
+                                </form>
+                            </li>
+                        </environment>
                     </ul>
                 </div>
             </div>
