@@ -1,0 +1,33 @@
+@model QuestionListItemModel
+<div class="row justify-content-between">
+    <div class="col-12 col-md-auto">
+        <a asp-controller="Questions" asp-action="Details" asp-route-id="@Model.Id">@Model.Title <span class="text-muted">#@Model.Id</span></a>
+    </div>
+
+    <div class="col-12 col-md-auto text-right">
+        <small>
+            <span class="text-muted">@Model.SubmissionTime</span>
+            /
+            <span class="text-muted">
+                <pluralize singular="view" plural="views">@Model.ViewNumber</pluralize>
+            </span>
+            /
+            <span class="text-muted">
+                <pluralize singular="vote" plural="votes">@Model.VoteNumber</pluralize>
+            </span>
+            /
+            <form class="inline" method="post" asp-route="question-vote-up" asp-route-id="@Model.Id">
+                <a asp-route="question-vote-up" asp-route-id="@Model.Id" onclick="javascript: this.parentNode.submit(); return false;">&plus;</a>
+            </form>
+            /
+            <form class="inline" method="post" asp-route="question-vote-down" asp-route-id="@Model.Id">
+                <a asp-route="question-vote-down" asp-route-id="@Model.Id" onclick="javascript: this.parentNode.submit(); return false;">&minus;</a>
+            </form>
+            /
+            <form class="inline" method="post" asp-action="Delete" asp-route-id="@Model.Id" asp-route-redirect="/">
+                <a asp-action="Delete" asp-route-id="@Model.Id" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
+            </form>
+        </small>
+    </div>
+</div>
+<hr />
