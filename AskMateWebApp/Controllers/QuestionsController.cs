@@ -32,6 +32,16 @@ namespace AskMateWebApp.Controllers
         }
 
         [HttpGet]
+        public IActionResult Index()
+        {
+            var questions = _questionsService.GetAll(5);
+            return View(new QuestionListModel
+            {
+                Questions = questions.Select(x => new QuestionListItemModel(x)).ToList()
+            });
+        }
+
+        [HttpGet]
         public IActionResult List(Question.SortField sort = Question.SortField.SubmissionTime, bool ascending = false)
         {
             var questions = _questionsService.GetAll(sort, ascending);

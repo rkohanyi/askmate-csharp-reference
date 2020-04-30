@@ -85,7 +85,7 @@ namespace AskMateWebApp
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Questions}/{action=List}/{id?}");
+                    pattern: "{controller=Questions}/{action=Index}/{id?}");
             });
         }
     }

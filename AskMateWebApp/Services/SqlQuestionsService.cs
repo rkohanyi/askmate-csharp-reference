@@ -73,23 +73,48 @@ namespace AskMateWebApp.Services
 
         public List<Question> GetAll()
         {
-            return GetAll(Question.SortField.SubmissionTime, false);
+            return GetAll(Question.SortField.SubmissionTime, false, 0);
+        }
+
+        public List<Question> GetAll(long limit)
+        {
+            return GetAll(Question.SortField.SubmissionTime, false, limit);
         }
 
         public List<Question> GetAll(bool ascending)
         {
-            return GetAll(Question.SortField.SubmissionTime, ascending);
+            return GetAll(Question.SortField.SubmissionTime, ascending, 0);
+        }
+
+        public List<Question> GetAll(bool ascending, long limit)
+        {
+            return GetAll(Question.SortField.SubmissionTime, ascending, limit);
         }
 
         public List<Question> GetAll(Question.SortField sort)
         {
-            return GetAll(sort, false);
+            return GetAll(sort, false, 0);
+        }
+
+        public List<Question> GetAll(Question.SortField sort, long limit)
+        {
+            return GetAll(sort, false, limit);
         }
 
         public List<Question> GetAll(Question.SortField sort, bool ascending)
         {
+            return GetAll(sort, false, 0);
+        }
+
+        public List<Question> GetAll(Question.SortField sort, bool ascending, long limit)
+        {
             using var command = _connection.CreateCommand();
-            command.CommandText = $"SELECT * FROM question ORDER BY {sort.ToString().ToSnakeCase()} {(ascending ? "ASC" : "DESC")}";
+            string sql = $"SELECT * FROM question ORDER BY {sort.ToString().ToSnakeCase()} {(ascending ? "ASC" : "DESC")}";
+            if (limit > 0)
+            {
+                sql += $" LIMIT {limit}";
+            }
+            command.CommandText = sql;
 
             using var reader = command.ExecuteReader();
             List<Question> questions = new List<Question>();
