@@ -12,23 +12,25 @@ namespace AskMateWebApp.Controllers
         private readonly ILogger<AnswersController> _logger;
         private readonly IStorageService _storageService;
         private readonly IAnswersService _answersService;
+        private readonly ICommentsService _commentsService;
 
-        public AnswersController(ILogger<AnswersController> logger, IStorageService storageService, IAnswersService answerService)
+        public AnswersController(
+            ILogger<AnswersController> logger,
+            IStorageService storageService,
+            IAnswersService answerService,
+            ICommentsService commentsService)
         {
             _logger = logger;
             _storageService = storageService;
             _answersService = answerService;
+            _commentsService = commentsService;
         }
 
         [HttpGet]
         public IActionResult Edit(int id)
         {
             var answer = _answersService.GetOne(id);
-            return View(new AddAnswerModel
-            {
-                QuestionId = answer.QuestionId,
-                Message = answer.Message
-            });
+            return View(new AddAnswerModel(answer));
         }
 
         [HttpPost]
@@ -41,6 +43,25 @@ namespace AskMateWebApp.Controllers
             return RedirectToAction("Details", "Questions", new { id = newAnswer.QuestionId });
         }
 
+        [HttpGet]
+        [Route("[controller]/Add/[action]/{id}", Name = "add-answer-comment")]
+        public IActionResult Comment(int id)
+        {
+            var answer = _answersService.GetOne(id);
+            return View(new AddCommentModel
+            {
+                QuestionId = answer.QuestionId
+            });
+        }
+
+        [HttpPost]
+        [Route("[controller]/Add/[action]/{id}", Name = "add-answer-comment")]
+        public IActionResult Comment(int id, AddCommentModel newComment)
+        {
+            _commentsService.Add(ICommentsService.CommentType.Answer, id, newComment.Message);
+            return RedirectToAction("Details", "Questions", new { id = newComment.QuestionId });
+        }
+
         [HttpPost]
         public IActionResult Delete(int id)
         {
@@ -49,6 +70,7 @@ namespace AskMateWebApp.Controllers
             {
                 _storageService.Delete(a.Image);
             }
+            _commentsService.DeleteAll(ICommentsService.CommentType.Answer, id);
             _answersService.Delete(a.Id);
             return Redirect(Request.Headers["Referer"]);
         }

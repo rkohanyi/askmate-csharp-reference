@@ -145,11 +145,11 @@ namespace AskMateWebApp.Services
 
             var messageParam = command.CreateParameter();
             messageParam.ParameterName = "message";
-            messageParam.Value = message;
+            messageParam.Value = (object)message ?? DBNull.Value;
 
             var imageParam = command.CreateParameter();
             imageParam.ParameterName = "image";
-            imageParam.Value = image;
+            imageParam.Value = (object)image ?? DBNull.Value;
 
             command.CommandText = @"
                 UPDATE

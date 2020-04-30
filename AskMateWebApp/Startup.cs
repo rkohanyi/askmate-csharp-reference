@@ -51,6 +51,7 @@ namespace AskMateWebApp
             });
             services.AddScoped<IQuestionsService, SqlQuestionsService>();
             services.AddScoped<IAnswersService, SqlAnswersService>();
+            services.AddScoped<ICommentsService, SqlCommentsService>();
             services.AddSingleton(typeof(IStorageService), new FileStorageService(uploadsDirectory));
         }
 

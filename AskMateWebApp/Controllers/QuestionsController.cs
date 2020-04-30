@@ -15,17 +15,20 @@ namespace AskMateWebApp.Controllers
         private readonly IStorageService _storageService;
         private readonly IQuestionsService _questionsService;
         private readonly IAnswersService _answersService;
+        private readonly ICommentsService _commentsService;
 
         public QuestionsController(
             ILogger<QuestionsController> logger,
             IStorageService storageService,
             IQuestionsService questionsService,
-            IAnswersService answerService)
+            IAnswersService answerService,
+            ICommentsService commentsService)
         {
             _logger = logger;
             _storageService = storageService;
             _questionsService = questionsService;
             _answersService = answerService;
+            _commentsService = commentsService;
         }
 
         [HttpGet]
@@ -45,8 +48,10 @@ namespace AskMateWebApp.Controllers
         {
             var question = _questionsService.GetOne(id);
             var answers = _answersService.GetAll(id, sort, ascending);
+            var questionComments = _commentsService.GetAll(ICommentsService.CommentType.Question, id);
+            var answerComments = _commentsService.GetAll(ICommentsService.CommentType.Answer, answers.Select(x => x.Id).ToArray());
             _questionsService.View(id);
-            return View(new QuestionDetailModel(question, answers));
+            return View(new QuestionDetailModel(question, questionComments, answers, answerComments));
         }
 
         [HttpGet]
@@ -104,6 +109,24 @@ namespace AskMateWebApp.Controllers
             return RedirectToAction("Details", new { id });
         }
 
+        [HttpGet]
+        [Route("[controller]/Add/[action]/{id}", Name = "add-question-comment")]
+        public IActionResult Comment(int id)
+        {
+            return View(new AddCommentModel
+            {
+                QuestionId = id
+            });
+        }
+
+        [HttpPost]
+        [Route("[controller]/Add/[action]/{id}", Name = "add-question-comment")]
+        public IActionResult Comment(int id, AddCommentModel newComment)
+        {
+            _commentsService.Add(ICommentsService.CommentType.Question, id, newComment.Message);
+            return RedirectToAction("Details", new { id });
+        }
+
         [HttpPost]
         [Route("[controller]/Vote/[action]/{id}", Name = "question-vote-up")]
         public IActionResult Up(int id)
@@ -131,11 +154,16 @@ namespace AskMateWebApp.Controllers
                     _storageService.Delete(a.Image);
                 }
             }
+            foreach (var a in _answersService.GetAll(q.Id))
+            {
+                _commentsService.DeleteAll(ICommentsService.CommentType.Answer, a.Id);
+            }
+            _answersService.DeleteAll(id);
             if (!string.IsNullOrEmpty(q.Image))
             {
                 _storageService.Delete(q.Image);
             }
-            _answersService.DeleteAll(id);
+            _commentsService.DeleteAll(ICommentsService.CommentType.Question, id);
             _questionsService.Delete(q.Id);
             if (redirect == null)
             {

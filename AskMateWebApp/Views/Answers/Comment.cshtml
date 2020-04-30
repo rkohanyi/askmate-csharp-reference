@@ -1,6 +1,6 @@
-@model AddAnswerModel
+@model AddCommentModel
 @{
-    ViewData["Title"] = "Edit Answer";
+    ViewData["Title"] = "Add Comment";
 }
 <h1>@ViewData["Title"]</h1>
 <form method="post" enctype="multipart/form-data">
@@ -9,9 +9,5 @@
         <label asp-for="Message"></label>
         <textarea asp-for="Message" class="form-control">@Model.Message</textarea>
     </div>
-    <div class="form-group">
-        <label asp-for="Image"></label>
-        <input type="file" class="form-control-file" asp-for="Image">
-    </div>
-    <input type="submit" value="Save" class="btn btn-primary">
+    <input type="submit" value="Add" class="btn btn-primary" />
 </form>

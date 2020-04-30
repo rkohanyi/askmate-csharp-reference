@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = Model.Title;
 }
-<h1 class="display-4">@Model.Title</h1>
+<h1>@Model.Title</h1>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit question</a>
 </div>
@@ -45,7 +45,52 @@
     </div>
 </div>
 <hr />
-<h2 class="display-5">Answers</h2>
+<div class="container card-body">
+    <div class="row">
+        <div class="col">
+            <h3>Comments</h3>
+            <div>
+                <a asp-route="add-question-comment" asp-route-id="@Model.Id">Add comment</a>
+            </div>
+        </div>
+    </div>
+    @if (Model.Comments.Count == 0)
+    {
+        <div class="row">
+            <div class="col">
+                <p class="text-muted">No comments yet</p>
+            </div>
+        </div>
+    }
+    else
+    {
+        @foreach (var c in Model.Comments)
+        {
+            <div class="row">
+                <div class="col">
+                    <small>
+                        <span class="float-left">
+                            @c.Message <a asp-controller="Comments" asp-action="Edit" asp-route-id="@c.Id">Edit comment</a>
+                        </span>
+                        <span class="float-right">
+                            <span class="text-muted">@c.SubmissionTime.ToString("s")</span>
+                            /
+                            <span class="text-muted">
+                                <pluralize class="inline" singular="edit" plural="edits">@c.EditedNumber</pluralize>
+                            </span>
+                            /
+                            <form class="inline" method="post" asp-controller="Comments" asp-action="Delete" asp-route-id="@c.Id">
+                                <a asp-controller="Comments" asp-action="Delete" asp-route-id="@c.Id" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
+                            </form>
+                        </span>
+                    </small>
+                </div>
+            </div>
+        }
+    }
+</div>
+<hr />
+<h1>Answers</h1>
 <div>
     <a asp-route="add-answer" asp-route-id="@Model.Id">Add answer</a>
 </div>
@@ -62,49 +107,84 @@
 }
 else
 {
-    <div class="container">
-        @foreach (var a in Model.Answers)
-        {
-            <div class="card border-0">
-                <div class="row">
-                    <div class="@(string.IsNullOrEmpty(a.Image) ? "col-md-12" : "col-md-8")">
-                        <div class="card-body">
-                            <p class="card-text">@a.Message</p>
-                            <a asp-controller="Answers" asp-action="Edit" asp-route-id="@a.Id">Edit answer</a>
-                        </div>
+    @foreach (var a in Model.Answers)
+    {
+        <h2>Answer <span class="text-muted">#@a.Id</span></h2>
+        <div>
+            <a asp-controller="Answers" asp-action="Edit" asp-route-id="@a.Id">Edit answer</a>
+        </div>
+        <small>
+            <span class="text-muted">@a.SubmissionTime.ToString("s")</span>
+            /
+            <span class="text-muted">
+                <pluralize class="inline" singular="vote" plural="votes">@a.VoteNumber</pluralize>
+            </span>
+            /
+            <form class="inline" method="post" asp-route="answer-vote-up" asp-route-id="@a.Id">
+                <a asp-route="answer-vote-up" asp-route-id="@a.Id" onclick="javascript: this.parentNode.submit(); return false;">&plus;</a>
+            </form>
+            /
+            <form class="inline" method="post" asp-route="answer-vote-down" asp-route-id="@a.Id">
+                <a asp-route="answer-vote-down" asp-route-id="@a.Id" onclick="javascript: this.parentNode.submit(); return false;">&minus;</a>
+            </form>
+            /
+            <form class="inline" method="post" asp-controller="Answers" asp-action="Delete" asp-route-id="@a.Id">
+                <a asp-controller="Answers" asp-action="Delete" asp-route-id="@a.Id" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
+            </form>
+        </small>
+        <div class="card border-0">
+            <div class="row">
+                <div class="@(string.IsNullOrEmpty(a.Image) ? "col-md-12" : "col-md-8")">
+                    <div class="card-body">
+                        <p class="card-text">@a.Message</p>
                     </div>
-                    @if (!string.IsNullOrEmpty(a.Image))
-                    {
-                        <div class="col-md-4">
-                            <img class="card-img" src="/uploads/@a.Image" />
-                        </div>
-                    }
+                </div>
+                @if (!string.IsNullOrEmpty(a.Image))
+                {
+                    <div class="col-md-4">
+                        <img class="card-img" src="/uploads/@a.Image" />
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="container card-body">
+            <div class="row">
+                <div class="col">
+                    <h3>Comments</h3>
+                    <a asp-route="add-answer-comment" asp-route-id="@a.Id">Add comment</a>
                 </div>
             </div>
             <div class="row">
-                <div class="text-right col">
-                    <small>
-                        <span class="text-muted">@a.SubmissionTime.ToString("s")</span>
-                        /
-                        <span class="text-muted">
-                            <pluralize class="inline" singular="vote" plural="votes">@a.VoteNumber</pluralize>
-                        </span>
-                        /
-                        <form class="inline" method="post" asp-route="answer-vote-up" asp-route-id="@a.Id">
-                            <a asp-route="answer-vote-up" asp-route-id="@a.Id" onclick="javascript: this.parentNode.submit(); return false;">&plus;</a>
-                        </form>
-                        /
-                        <form class="inline" method="post" asp-route="answer-vote-down" asp-route-id="@a.Id">
-                            <a asp-route="answer-vote-down" asp-route-id="@a.Id" onclick="javascript: this.parentNode.submit(); return false;">&minus;</a>
-                        </form>
-                        /
-                        <form class="inline" method="post" asp-controller="Answers" asp-action="Delete" asp-route-id="@a.Id">
-                            <a asp-controller="Answers" asp-action="Delete" asp-route-id="@a.Id" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
-                        </form>
-                    </small>
-                </div>
+                @if (a.Comments.Count > 0)
+                {
+                    <div class="container">
+                        @foreach (var ac in a.Comments)
+                        {
+                            <div class="row">
+                                <div class="col">
+                                    <small>
+                                        <span class="float-left">
+                                            @ac.Message <a asp-controller="Comments" asp-action="Edit" asp-route-id="@ac.Id">Edit comment</a>
+                                        </span>
+                                        <span class="float-right">
+                                            <span class="text-muted">@ac.SubmissionTime.ToString("s")</span>
+                                            /
+                                            <span class="text-muted">
+                                                <pluralize class="inline" singular="edit" plural="edits">@ac.EditedNumber</pluralize>
+                                            </span>
+                                            /
+                                            <form class="inline" method="post" asp-controller="Comments" asp-action="Delete" asp-route-id="@ac.Id">
+                                                <a asp-controller="Comments" asp-action="Delete" asp-route-id="@ac.Id" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
+                                            </form>
+                                        </span>
+                                    </small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
             </div>
-            <hr />
-        }
-    </div>
+        </div>
+        <hr />
+    }
 }

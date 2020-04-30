@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Questions";
 }
-<h1 class="display-4">@ViewData["Title"]</h1>
+<h1>@ViewData["Title"]</h1>
 <div>
     <a asp-controller="Questions" asp-action="Add">Add question</a>
 </div>
@@ -20,7 +20,7 @@
     {
         <div class="row justify-content-between">
             <div class="col-12 col-md-auto">
-                <a asp-controller="Questions" asp-action="Details" asp-route-id="@q.Id">@q.Title</a>
+                <a asp-controller="Questions" asp-action="Details" asp-route-id="@q.Id">@q.Title <span class="text-muted">#@q.Id</span></a>
             </div>
 
             <div class="col-12 col-md-auto text-right">
