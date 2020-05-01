@@ -1,6 +1,3 @@
-using AskMateWebApp.Domain;
-using Microsoft.AspNetCore.Http;
-
 namespace AskMateWebApp.Models
 {
     public class AddCommentModel

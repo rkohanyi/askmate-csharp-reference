@@ -1,6 +1,5 @@
 using AskMateWebApp.Domain;
 using System.Collections.Generic;
-using System.IO;
 
 namespace AskMateWebApp.Services
 {

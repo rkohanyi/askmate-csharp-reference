@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AskMateWebApp.Models
 {
-    public class QuestionDetailModel
+    public class QuestionSearchResultModel
     {
         public int Id { get; set; }
         public DateTime SubmissionTime { get; set; }
@@ -14,14 +14,9 @@ namespace AskMateWebApp.Models
         public string Title { get; set; }
         public string Message { get; set; }
         public string Image { get; set; }
-        public List<CommentModel> Comments { get; set; }
-        public List<AnswerModel> Answers { get; set; }
+        public List<AnswerSearchResultModel> Answers { get; set; }
 
-        public QuestionDetailModel(
-            Question question,
-            List<Comment> comments,
-            List<Answer> answers,
-            Dictionary<int, List<Comment>> answerComments)
+        public QuestionSearchResultModel(Question question, List<Answer> answers)
         {
             Id = question.Id;
             SubmissionTime = question.SubmissionTime;
@@ -30,8 +25,7 @@ namespace AskMateWebApp.Models
             Title = question.Title;
             Message = question.Message;
             Image = question.Image;
-            Comments = comments.Select(x => new CommentModel(x)).ToList();
-            Answers = answers.Select(x => new AnswerModel(x, answerComments[x.Id])).ToList();
+            Answers = answers.Select(x => new AnswerSearchResultModel(x)).ToList();
         }
     }
 }

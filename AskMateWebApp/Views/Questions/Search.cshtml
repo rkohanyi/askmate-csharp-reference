@@ -1,0 +1,27 @@
+@model List<QuestionSearchResultModel>
+@{
+    ViewData["Title"] = "Search Results";
+}
+<h1>@ViewData["Title"]</h1>
+<div class="container">
+    @foreach (var q in Model)
+    {
+        <div class="card border-0 mb-1">
+            <div class="card-header">
+                <h5 class="card-title">
+                    <a asp-controller="Questions" asp-action="Details" asp-route-id="@q.Id">@Html.Raw(q.Title) <span class="text-muted">#@q.Id</span></a>
+                </h5>
+                <p class="card-text">@Html.Raw(q.Message)</p>
+            </div>
+            @if (q.Answers.Count > 0)
+            {
+                <ul class="list-group list-group-flush p-1">
+                    @foreach (var a in q.Answers)
+                    {
+                        <li class="list-group-item ml-1">@Html.Raw(a.Message)</li>
+                    }
+                </ul>
+            }
+        </div>
+    }
+</div>

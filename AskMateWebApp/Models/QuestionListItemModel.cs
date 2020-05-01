@@ -1,6 +1,5 @@
 using AskMateWebApp.Domain;
 using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace AskMateWebApp.Models
 {

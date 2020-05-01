@@ -43,24 +43,30 @@ namespace AskMateWebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddTransient<IDbConnection>(_ =>
+            services.AddScoped<IDbConnection>(_ =>
             {
                 var connection = new NpgsqlConnection(connectionString);
                 connection.Open();
                 return connection;
             });
+            services.AddScoped<IDatabaseService, PostgreSqlDatabaseService>();
             services.AddScoped<IQuestionsService, SqlQuestionsService>();
             services.AddScoped<IAnswersService, SqlAnswersService>();
             services.AddScoped<ICommentsService, SqlCommentsService>();
+            services.AddScoped<ISearchService, SqlSearchService>(x => new SqlSearchService(x.GetRequiredService<IDbConnection>(), "<mark>", "</mark>"));
             services.AddSingleton(typeof(IStorageService), new FileStorageService(uploadsDirectory));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IDatabaseService databaseService)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                if (!databaseService.Initialized)
+                {
+                    databaseService.Reset();
+                }
             }
             else
             {

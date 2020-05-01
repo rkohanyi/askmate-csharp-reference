@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using AskMateWebApp.Services;
 using AskMateWebApp.Models;
-using System.IO;
-using AskMateWebApp.Domain;
 
 namespace AskMateWebApp.Controllers
 {

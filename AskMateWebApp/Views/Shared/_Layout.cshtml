@@ -16,8 +16,8 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="navbar-collapse collapse">
+                    <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Questions" asp-action="Index">Latest Questions</a>
                         </li>
@@ -32,6 +32,10 @@
                             </li>
                         </environment>
                     </ul>
+                    <form class="form-inline" method="get" asp-controller="Questions" asp-action="Search">
+                        <input class="form-control" type="search" name="phrase" placeholder="Search">
+                        <button class="btn text-success" type="submit">Search</button>
+                    </form>
                 </div>
             </div>
         </nav>

@@ -1,5 +1,3 @@
-using System;
-
 namespace AskMateWebApp.Models
 {
     public class ErrorViewModel

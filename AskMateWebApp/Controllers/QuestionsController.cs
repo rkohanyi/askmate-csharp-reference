@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using AskMateWebApp.Models;
 using AskMateWebApp.Services;
 using AskMateWebApp.Domain;
-using Microsoft.AspNetCore.Hosting;
 using System.IO;
 
 namespace AskMateWebApp.Controllers
@@ -16,19 +15,22 @@ namespace AskMateWebApp.Controllers
         private readonly IQuestionsService _questionsService;
         private readonly IAnswersService _answersService;
         private readonly ICommentsService _commentsService;
+        private readonly ISearchService _searchService;
 
         public QuestionsController(
             ILogger<QuestionsController> logger,
             IStorageService storageService,
             IQuestionsService questionsService,
             IAnswersService answerService,
-            ICommentsService commentsService)
+            ICommentsService commentsService,
+            ISearchService searchService)
         {
             _logger = logger;
             _storageService = storageService;
             _questionsService = questionsService;
             _answersService = answerService;
             _commentsService = commentsService;
+            _searchService = searchService;
         }
 
         [HttpGet]
@@ -51,6 +53,13 @@ namespace AskMateWebApp.Controllers
                 Ascending = ascending,
                 Questions = questions.Select(x => new QuestionListItemModel(x)).ToList()
             });
+        }
+
+        [HttpGet]
+        public IActionResult Search(string phrase)
+        {
+            var results = _searchService.SearchAll(phrase);
+            return View(results.Select(x => new QuestionSearchResultModel(x.Key, x.Value)).ToList());
         }
 
         [HttpGet]
