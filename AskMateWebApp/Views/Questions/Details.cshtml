@@ -29,6 +29,19 @@
         <a asp-action="Delete" asp-route-id="@Model.Id" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
     </form>
 </small>
+<div>
+    @foreach (var t in Model.Tags)
+    {
+        <span class="badge badge-light">
+            @t.Name <form class="inline" method="post" asp-route="delete-question-tag" asp-route-id="@Model.Id" asp-route-tagId="@t.Id">
+                <a asp-route="delete-question-tag" asp-route-id="@Model.Id" asp-route-tagId="@t.Id" onclick="javascript: this.parentNode.submit(); return false;">&times;</a>
+            </form>
+        </span>
+    }
+</div>
+<div>
+    <a class="badge" asp-route="add-question-tag" asp-route-id="@Model.Id">Add tag</a>
+</div>
 <div class="card border-0">
     <div class="row">
         <div class="@(string.IsNullOrEmpty(Model.Image) ? "col-md-12" : "col-md-8")">

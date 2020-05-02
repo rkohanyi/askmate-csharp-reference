@@ -13,6 +13,8 @@ namespace AskMateWebApp.Controllers
         private readonly ILogger<QuestionsController> _logger;
         private readonly IStorageService _storageService;
         private readonly IQuestionsService _questionsService;
+        private readonly IQuestionsTagsService _questionsTagsService;
+        private readonly ITagsService _tagsService;
         private readonly IAnswersService _answersService;
         private readonly ICommentsService _commentsService;
         private readonly ISearchService _searchService;
@@ -21,13 +23,17 @@ namespace AskMateWebApp.Controllers
             ILogger<QuestionsController> logger,
             IStorageService storageService,
             IQuestionsService questionsService,
+            IQuestionsTagsService questionsTagsService,
+            ITagsService tagsService,
             IAnswersService answerService,
             ICommentsService commentsService,
             ISearchService searchService)
         {
             _logger = logger;
             _storageService = storageService;
+            _tagsService = tagsService;
             _questionsService = questionsService;
+            _questionsTagsService = questionsTagsService;
             _answersService = answerService;
             _commentsService = commentsService;
             _searchService = searchService;
@@ -66,11 +72,12 @@ namespace AskMateWebApp.Controllers
         public IActionResult Details(int id, Answer.SortField sort = AskMateWebApp.Domain.Answer.SortField.SubmissionTime, bool ascending = false)
         {
             var question = _questionsService.GetOne(id);
+            var tags = _tagsService.GetAll(id);
             var answers = _answersService.GetAll(id, sort, ascending);
             var questionComments = _commentsService.GetAll(ICommentsService.CommentType.Question, id);
             var answerComments = _commentsService.GetAll(ICommentsService.CommentType.Answer, answers.Select(x => x.Id).ToArray());
             _questionsService.View(id);
-            return View(new QuestionDetailModel(question, questionComments, answers, answerComments));
+            return View(new QuestionDetailModel(question, tags, questionComments, answers, answerComments));
         }
 
         [HttpGet]
@@ -162,6 +169,31 @@ namespace AskMateWebApp.Controllers
             return Redirect(Request.Headers["Referer"]);
         }
 
+        [HttpGet]
+        [Route("[controller]/Add/[action]/{id}", Name = "add-question-tag")]
+        public IActionResult Tag()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Route("[controller]/Add/[action]/{id}", Name = "add-question-tag")]
+        public IActionResult Tag(int id, AddTagModel newTag)
+        {
+            string[] tagNames = newTag.Tags.Split(',').Select(x => x.Trim()).ToArray();
+            int[] tagIds = _tagsService.Add(tagNames).ToArray();
+            _questionsTagsService.Add(id, tagIds);
+            return RedirectToAction("Details", new { id });
+        }
+
+        [HttpPost]
+        [Route("[controller]/{id}/Tags/{tagId}/Delete", Name = "delete-question-tag")]
+        public IActionResult DeleteTag(int id, int tagId)
+        {
+            _questionsTagsService.Delete(id, tagId);
+            return RedirectToAction("Details", new { id });
+        }
+
         [HttpPost]
         public IActionResult Delete(int id, string redirect)
         {
@@ -183,6 +215,7 @@ namespace AskMateWebApp.Controllers
                 _storageService.Delete(q.Image);
             }
             _commentsService.DeleteAll(ICommentsService.CommentType.Question, id);
+            _questionsTagsService.DeleteAll(q.Id);
             _questionsService.Delete(q.Id);
             if (redirect == null)
             {

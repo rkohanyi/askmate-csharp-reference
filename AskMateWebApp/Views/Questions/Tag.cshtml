@@ -1,0 +1,12 @@
+@model AddTagModel
+@{
+    ViewData["Title"] = "Add Tag";
+}
+<h1>@ViewData["Title"]</h1>
+<form method="post">
+    <div class="form-group">
+        <label asp-for="Tags"></label>
+        <input class="form-control" asp-for="Tags" />
+    </div>
+    <input type="submit" value="Add" class="btn btn-primary">
+</form>

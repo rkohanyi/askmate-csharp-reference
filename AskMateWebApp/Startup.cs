@@ -51,6 +51,8 @@ namespace AskMateWebApp
             });
             services.AddScoped<IDatabaseService, PostgreSqlDatabaseService>();
             services.AddScoped<IQuestionsService, SqlQuestionsService>();
+            services.AddScoped<IQuestionsTagsService, SqlQuestionsTagsService>();
+            services.AddScoped<ITagsService, SqlTagsService>();
             services.AddScoped<IAnswersService, SqlAnswersService>();
             services.AddScoped<ICommentsService, SqlCommentsService>();
             services.AddScoped<ISearchService, SqlSearchService>(x => new SqlSearchService(x.GetRequiredService<IDbConnection>(), "<mark>", "</mark>"));

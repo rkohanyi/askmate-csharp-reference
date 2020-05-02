@@ -14,11 +14,13 @@ namespace AskMateWebApp.Models
         public string Title { get; set; }
         public string Message { get; set; }
         public string Image { get; set; }
+        public List<TagModel> Tags { get; set; }
         public List<CommentModel> Comments { get; set; }
         public List<AnswerModel> Answers { get; set; }
 
         public QuestionDetailModel(
             Question question,
+            List<Tag> tags,
             List<Comment> comments,
             List<Answer> answers,
             Dictionary<int, List<Comment>> answerComments)
@@ -30,6 +32,7 @@ namespace AskMateWebApp.Models
             Title = question.Title;
             Message = question.Message;
             Image = question.Image;
+            Tags = tags.Select(x => new TagModel(x)).ToList();
             Comments = comments.Select(x => new CommentModel(x)).ToList();
             Answers = answers.Select(x => new AnswerModel(x, answerComments[x.Id])).ToList();
         }
