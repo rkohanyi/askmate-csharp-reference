@@ -30,7 +30,8 @@ CREATE TABLE tag (
 
 CREATE TABLE question_tag (
   question_id INTEGER NOT NULL REFERENCES question(id),
-  tag_id INTEGER NOT NULL REFERENCES tag(id)
+  tag_id INTEGER NOT NULL REFERENCES tag(id),
+  PRIMARY KEY (question_id, tag_id)
 );
 
 CREATE TABLE comment (
