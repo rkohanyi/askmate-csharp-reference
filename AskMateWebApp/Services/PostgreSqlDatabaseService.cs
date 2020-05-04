@@ -5,6 +5,8 @@ namespace AskMateWebApp.Services
 {
     class PostgreSqlDatabaseService : IDatabaseService
     {
+        private static readonly string[] SCRIPTS = { "schema", "data" };
+
         private readonly ILogger<PostgreSqlDatabaseService> _logger;
         private readonly IDbConnection _connection;
 
@@ -32,7 +34,7 @@ namespace AskMateWebApp.Services
 
         public void Reset()
         {
-            foreach (string script in new string[] { "drop-init", "question", "answer", "tag", "question_tag", "comment", "full-text-search" })
+            foreach (string script in SCRIPTS)
             {
                 _logger.LogDebug($"About to run {script}.sql");
                 using IDbCommand command = _connection.CreateCommand();

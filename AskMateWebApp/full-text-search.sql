@@ -10,5 +10,4 @@ GENERATED ALWAYS AS (
     to_tsvector('english', coalesce(message, ''))
 ) STORED;
 
-CREATE INDEX question_fts_idx ON question USING GIN (document);
-CREATE INDEX answer_fts_idx ON answer USING GIN (document);
+
