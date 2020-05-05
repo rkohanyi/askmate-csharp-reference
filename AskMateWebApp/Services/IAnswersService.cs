@@ -5,12 +5,25 @@ namespace AskMateWebApp.Services
 {
     public interface IAnswersService
     {
-        List<Answer> GetAll(int questionId);
-        List<Answer> GetAll(int questionId, bool ascending);
-        List<Answer> GetAll(int questionId, Answer.SortField sort);
-        List<Answer> GetAll(int questionId, Answer.SortField sort, bool ascending);
+        public sealed class GetAllOptions
+        {
+            public int? UserId { get; set; }
+            public int? QuestionId { get; set; }
+            public Answer.SortField Sort { get; set; }
+            public bool Ascending { get; set; }
+
+            public GetAllOptions() : this(Answer.SortField.SubmissionTime, false) { }
+
+            public GetAllOptions(Answer.SortField sort, bool ascending)
+            {
+                Sort = sort;
+                Ascending = ascending;
+            }
+        }
+
+        List<Answer> GetAll(GetAllOptions opts);
         Answer GetOne(int id);
-        int Add(int questionId, string message, string image);
+        int Add(int userId, int questionId, string message, string image);
         void Update(int id, string message, string image);
         void Delete(int id);
         void DeleteAll(int questionId);

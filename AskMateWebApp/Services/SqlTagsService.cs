@@ -20,7 +20,7 @@ namespace AskMateWebApp.Services
 
         public SqlTagsService(IDbConnection connection)
         {
-            this._connection = connection;
+            _connection = connection;
         }
 
         public List<Tag> GetAll()

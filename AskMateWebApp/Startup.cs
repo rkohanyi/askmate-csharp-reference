@@ -1,4 +1,5 @@
 using AskMateWebApp.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -43,6 +44,7 @@ namespace AskMateWebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
             services.AddScoped<IDbConnection>(_ =>
             {
                 var connection = new NpgsqlConnection(connectionString);
@@ -50,6 +52,7 @@ namespace AskMateWebApp
                 return connection;
             });
             services.AddScoped<IDatabaseService, PostgreSqlDatabaseService>();
+            services.AddScoped<IUsersService, SqlUsersService>();
             services.AddScoped<IQuestionsService, SqlQuestionsService>();
             services.AddScoped<IQuestionsTagsService, SqlQuestionsTagsService>();
             services.AddScoped<ITagsService, SqlTagsService>();
@@ -87,6 +90,7 @@ namespace AskMateWebApp
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -24,12 +24,16 @@ namespace AskMateWebApp.Services
 
         public SqlAnswersService(IDbConnection connection)
         {
-            this._connection = connection;
+            _connection = connection;
         }
 
-        public int Add(int questionId, string message, string image)
+        public int Add(int userId, int questionId, string message, string image)
         {
             using var command = _connection.CreateCommand();
+
+            var userIdParam = command.CreateParameter();
+            userIdParam.ParameterName = "userId";
+            userIdParam.Value = userId;
 
             var questionIdParam = command.CreateParameter();
             questionIdParam.ParameterName = "questionId";
@@ -43,7 +47,8 @@ namespace AskMateWebApp.Services
             imageParam.ParameterName = "image";
             imageParam.Value = (object)image ?? DBNull.Value;
 
-            command.CommandText = "INSERT INTO answer (question_id, message, image) VALUES (@questionId, @message, @image) RETURNING id";
+            command.CommandText = "INSERT INTO answer (user_id, question_id, message, image) VALUES (@userId, @questionId, @message, @image) RETURNING id";
+            command.Parameters.Add(userIdParam);
             command.Parameters.Add(questionIdParam);
             command.Parameters.Add(messageParam);
             command.Parameters.Add(imageParam);
@@ -81,31 +86,32 @@ namespace AskMateWebApp.Services
             command.ExecuteNonQuery();
         }
 
-        public List<Answer> GetAll(int questionId)
-        {
-            return GetAll(questionId, Answer.SortField.SubmissionTime, false);
-        }
-
-        public List<Answer> GetAll(int questionId, bool ascending)
-        {
-            return GetAll(questionId, Answer.SortField.SubmissionTime, ascending);
-        }
-
-        public List<Answer> GetAll(int questionId, Answer.SortField sort)
-        {
-            return GetAll(questionId, sort, false);
-        }
-
-        public List<Answer> GetAll(int questionId, Answer.SortField sort, bool ascending)
+        public List<Answer> GetAll(IAnswersService.GetAllOptions opts)
         {
             using var command = _connection.CreateCommand();
-
-            var param = command.CreateParameter();
-            param.ParameterName = "questionId";
-            param.Value = questionId;
-
-            command.CommandText = $"SELECT * FROM answer WHERE question_id = @questionId ORDER BY {sort.ToString().ToSnakeCase()} {(ascending ? "ASC" : "DESC")}";
-            command.Parameters.Add(param);
+            string sql = "SELECT * FROM answer";
+            if (opts.UserId != null && opts.QuestionId != null)
+            {
+                throw new NotImplementedException();
+            }
+            if (opts.UserId != null)
+            {
+                sql += " WHERE user_id = @userId";
+                var userIdParam = command.CreateParameter();
+                userIdParam.ParameterName = "userId";
+                userIdParam.Value = (int)opts.UserId;
+                command.Parameters.Add(userIdParam);
+            }
+            if (opts.QuestionId != null)
+            {
+                sql += " WHERE question_id = @questionId";
+                var questionIdParam = command.CreateParameter();
+                questionIdParam.ParameterName = "questionId";
+                questionIdParam.Value = (int)opts.QuestionId;
+                command.Parameters.Add(questionIdParam);
+            }
+            sql += $" ORDER BY {opts.Sort.ToString().ToSnakeCase()} {(opts.Ascending ? "ASC" : "DESC")}";
+            command.CommandText = sql;
 
             using var reader = command.ExecuteReader();
             List<Answer> answers = new List<Answer>();

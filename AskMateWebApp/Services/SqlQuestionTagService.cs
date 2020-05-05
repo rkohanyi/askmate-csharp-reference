@@ -9,7 +9,7 @@ namespace AskMateWebApp.Services
 
         public SqlQuestionsTagsService(IDbConnection connection)
         {
-            this._connection = connection;
+            _connection = connection;
         }
 
         public void Add(int questionId, params int[] tagIds)

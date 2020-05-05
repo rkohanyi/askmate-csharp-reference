@@ -25,12 +25,16 @@ namespace AskMateWebApp.Services
 
         public SqlQuestionsService(IDbConnection connection)
         {
-            this._connection = connection;
+            _connection = connection;
         }
 
-        public int Add(string title, string message, string image)
+        public int Add(int userId, string title, string message, string image)
         {
             using var command = _connection.CreateCommand();
+
+            var userIdParam = command.CreateParameter();
+            userIdParam.ParameterName = "userId";
+            userIdParam.Value = userId;
 
             var titleParam = command.CreateParameter();
             titleParam.ParameterName = "title";
@@ -44,7 +48,8 @@ namespace AskMateWebApp.Services
             imageParam.ParameterName = "image";
             imageParam.Value = (object)image ?? DBNull.Value;
 
-            command.CommandText = "INSERT INTO question (title, message, image) VALUES (@title, @message, @image) RETURNING id";
+            command.CommandText = "INSERT INTO question (user_id, title, message, image) VALUES (@userId, @title, @message, @image) RETURNING id";
+            command.Parameters.Add(userIdParam);
             command.Parameters.Add(titleParam);
             command.Parameters.Add(messageParam);
             command.Parameters.Add(imageParam);
@@ -68,48 +73,26 @@ namespace AskMateWebApp.Services
             command.ExecuteNonQuery();
         }
 
-        public List<Question> GetAll()
-        {
-            return GetAll(Question.SortField.SubmissionTime, false, 0);
-        }
-
-        public List<Question> GetAll(long limit)
-        {
-            return GetAll(Question.SortField.SubmissionTime, false, limit);
-        }
-
-        public List<Question> GetAll(bool ascending)
-        {
-            return GetAll(Question.SortField.SubmissionTime, ascending, 0);
-        }
-
-        public List<Question> GetAll(bool ascending, long limit)
-        {
-            return GetAll(Question.SortField.SubmissionTime, ascending, limit);
-        }
-
-        public List<Question> GetAll(Question.SortField sort)
-        {
-            return GetAll(sort, false, 0);
-        }
-
-        public List<Question> GetAll(Question.SortField sort, long limit)
-        {
-            return GetAll(sort, false, limit);
-        }
-
-        public List<Question> GetAll(Question.SortField sort, bool ascending)
-        {
-            return GetAll(sort, false, 0);
-        }
-
-        public List<Question> GetAll(Question.SortField sort, bool ascending, long limit)
+        public List<Question> GetAll(IQuestionsService.GetAllOptions opts)
         {
             using var command = _connection.CreateCommand();
-            string sql = $"SELECT * FROM question ORDER BY {sort.ToString().ToSnakeCase()} {(ascending ? "ASC" : "DESC")}";
-            if (limit > 0)
+            string sql = "SELECT * FROM question";
+            if (opts.UserId != null)
             {
-                sql += $" LIMIT {limit}";
+                sql += " WHERE user_id = @userId";
+                var userIdParam = command.CreateParameter();
+                userIdParam.ParameterName = "userId";
+                userIdParam.Value = (int)opts.UserId;
+                command.Parameters.Add(userIdParam);
+            }
+            sql += $" ORDER BY {opts.Sort.ToString().ToSnakeCase()} {(opts.Ascending ? "ASC" : "DESC")}";
+            if (opts.Limit != null)
+            {
+                sql += " LIMIT @limit";
+                var limitParam = command.CreateParameter();
+                limitParam.ParameterName = "limit";
+                limitParam.Value = (int)opts.Limit;
+                command.Parameters.Add(limitParam);
             }
             command.CommandText = sql;
 

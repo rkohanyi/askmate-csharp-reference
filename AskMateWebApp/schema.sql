@@ -1,11 +1,13 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
 
+DROP VIEW IF EXISTS v_user;
 DROP TABLE IF EXISTS comment;
 DROP TABLE IF EXISTS question_tag;
 DROP TABLE IF EXISTS tag;
 DROP TABLE IF EXISTS answer;
 DROP TABLE IF EXISTS question;
 DROP TABLE IF EXISTS "user";
+DROP FUNCTION IF EXISTS set_question_id_for_answer_comment();
 
 CREATE TABLE "user" (
     id SERIAL PRIMARY KEY,
@@ -22,7 +24,7 @@ CREATE TABLE question (
     title TEXT DEFAULT NULL,
     message TEXT DEFAULT NULL,
     image TEXT DEFAULT NULL,
-    user_id INTEGER REFERENCES "user"(id),
+    user_id INTEGER NOT NULL REFERENCES "user"(id),
     document TSVECTOR GENERATED ALWAYS AS (
         setweight(to_tsvector('english', coalesce(title, '')), 'A') ||
         setweight(to_tsvector('english', coalesce(message, '')), 'B')
@@ -38,7 +40,7 @@ CREATE TABLE answer (
     vote_number INTEGER DEFAULT 0,
     message TEXT DEFAULT NULL,
     image TEXT DEFAULT NULL,
-    user_id INTEGER REFERENCES "user"(id),
+    user_id INTEGER NOT NULL REFERENCES "user"(id),
     document TSVECTOR GENERATED ALWAYS AS (
         to_tsvector('english', coalesce(message, ''))
     ) STORED
@@ -59,10 +61,36 @@ CREATE TABLE question_tag (
 
 CREATE TABLE comment (
     id SERIAL PRIMARY KEY,
-    question_id INTEGER DEFAULT NULL REFERENCES question(id),
+    question_id INTEGER NOT NULL REFERENCES question(id),
     answer_id INTEGER DEFAULT NULL REFERENCES answer(id),
     message TEXT DEFAULT NULL,
     submission_time TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
     edited_number INTEGER DEFAULT 0,
-    user_id INTEGER REFERENCES "user"(id)
+    user_id INTEGER NOT NULL REFERENCES "user"(id)
 );
+
+CREATE VIEW v_user AS
+SELECT
+    u.*,
+    COUNT(DISTINCT q.id) AS question_count,
+    COUNT(DISTINCT a.id) AS answer_count,
+    COUNT(DISTINCT c.id) AS comment_count
+FROM "user" AS u
+LEFT JOIN question AS q ON q.user_id = u.id
+LEFT JOIN answer AS a ON a.user_id = u.id
+LEFT JOIN comment AS c ON c.user_id = u.id
+GROUP BY u.id
+ORDER BY u.id;
+
+CREATE FUNCTION set_question_id_for_answer_comment() RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.question_id IS NULL THEN
+        NEW.question_id := (SELECT question_id FROM answer WHERE id = NEW.answer_id);
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER set_question_id_for_answer_comment_trigger
+BEFORE INSERT ON comment
+FOR EACH ROW EXECUTE FUNCTION set_question_id_for_answer_comment();

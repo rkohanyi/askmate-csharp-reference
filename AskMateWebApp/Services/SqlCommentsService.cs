@@ -27,9 +27,13 @@ namespace AskMateWebApp.Services
             this._connection = connection;
         }
 
-        public int Add(ICommentsService.CommentType type, int parentId, string message)
+        public int Add(int userId, ICommentsService.CommentType type, int parentId, string message)
         {
             using var command = _connection.CreateCommand();
+
+            var userIdParam = command.CreateParameter();
+            userIdParam.ParameterName = "userId";
+            userIdParam.Value = userId;
 
             var parentIdParam = command.CreateParameter();
             parentIdParam.ParameterName = "parentId";
@@ -39,7 +43,20 @@ namespace AskMateWebApp.Services
             messageParam.ParameterName = "message";
             messageParam.Value = (object)message ?? DBNull.Value;
 
-            command.CommandText = $"INSERT INTO comment ({type.ToString().ToSnakeCase() + "_id"}, message) VALUES (@parentId, @message) RETURNING id";
+            command.CommandText = @$"
+                INSERT INTO comment (
+                    user_id,
+                    {type.ToString().ToSnakeCase() + "_id"},
+                    message
+                )
+                VALUES (
+                    @userId,
+                    @parentId,
+                    @message
+                )
+                RETURNING id
+            ";
+            command.Parameters.Add(userIdParam);
             command.Parameters.Add(parentIdParam);
             command.Parameters.Add(messageParam);
 
@@ -74,6 +91,24 @@ namespace AskMateWebApp.Services
             command.Parameters.Add(param);
 
             command.ExecuteNonQuery();
+        }
+
+        public List<Comment> GetAll(int userId)
+        {
+            using var command = _connection.CreateCommand();
+            command.CommandText += "SELECT * FROM comment WHERE user_id = @userId ORDER BY submission_time DESC";
+            var param = command.CreateParameter();
+            param.ParameterName = "userId";
+            param.Value = userId;
+            command.Parameters.Add(param);
+
+            using var reader = command.ExecuteReader();
+            List<Comment> comments = new List<Comment>();
+            while (reader.Read())
+            {
+                comments.Add(ToComment(reader));
+            }
+            return comments;
         }
 
         public List<Comment> GetAll(ICommentsService.CommentType type, int parentId)
@@ -122,7 +157,7 @@ namespace AskMateWebApp.Services
                 int parentId = type switch
                 {
                     ICommentsService.CommentType.Question => comment.QuestionId,
-                    _ => comment.AnswerId
+                    _ => (int)comment.AnswerId
                 };
                 comments[parentId].Add(comment);
             }

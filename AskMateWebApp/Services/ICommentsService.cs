@@ -12,10 +12,10 @@ namespace AskMateWebApp.Services
         }
 
         Comment GetOne(int id);
+        List<Comment> GetAll(int userId);
         List<Comment> GetAll(CommentType type, int parentId);
         Dictionary<int, List<Comment>> GetAll(CommentType type, params int[] parentIds);
-
-        int Add(CommentType type, int parentId, string message);
+        int Add(int userId, CommentType type, int parentId, string message);
         void Update(int id, string message);
         void Delete(int id);
         void DeleteAll(CommentType type, int parentId);

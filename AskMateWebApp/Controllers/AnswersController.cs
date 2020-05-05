@@ -1,9 +1,10 @@
+using AskMateWebApp.Domain;
+using AskMateWebApp.Models;
+using AskMateWebApp.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using AskMateWebApp.Services;
-using AskMateWebApp.Models;
 using System.IO;
-using AskMateWebApp.Domain;
+using System.Security.Claims;
 
 namespace AskMateWebApp.Controllers
 {
@@ -58,7 +59,8 @@ namespace AskMateWebApp.Controllers
         [Route("[controller]/Add/[action]/{id}", Name = "add-answer-comment")]
         public IActionResult Comment(int id, AddCommentModel newComment)
         {
-            _commentsService.Add(ICommentsService.CommentType.Answer, id, newComment.Message);
+            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
+            _commentsService.Add(userId, ICommentsService.CommentType.Answer, id, newComment.Message);
             return RedirectToAction("Details", "Questions", new { id = newComment.QuestionId });
         }
 

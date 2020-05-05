@@ -1,0 +1,80 @@
+@model UserDetailModel
+@{
+    ViewData["Title"] = "User Page";
+}
+<h1>@ViewData["Title"]</h1>
+<hr />
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <dl>
+                <dt>ID</dt>
+                <dd>@Model.Id</dd>
+                <dt>Username</dt>
+                <dd>@Model.Username</dd>
+                <dt>Question Count</dt>
+                <dd>@Model.Questions.Count</dd>
+                <dt>Answer Count</dt>
+                <dd>@Model.Answers.Count</dd>
+                <dt>Comment Count</dt>
+                <dd>@Model.Comments.Count</dd>
+                <dt>Registration Time</dt>
+                <dd>@Model.RegistrationTime</dd>
+            </dl>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h2>Questions</h2>
+            @if (Model.Questions.Count > 0)
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var q in Model.Questions)
+                    {
+                        <li class="list-group-item"><a asp-controller="Questions" asp-action="Details" asp-route-id="@q.Id">@q.Title</a></li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>No questions yet.</p>
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h2>Answers</h2>
+            @if (Model.Answers.Count > 0)
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var a in Model.Answers)
+                    {
+                        <li class="list-group-item"><a asp-controller="Questions" asp-action="Details" asp-route-id="@a.QuestionId">@a.Message</a></li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>No answers yet.</p>
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h2>Comments</h2>
+            @if (Model.Comments.Count > 0)
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var c in Model.Comments)
+                    {
+                        <li class="list-group-item"><a asp-controller="Questions" asp-action="Details" asp-route-id="@c.QuestionId">@c.Message</a></li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>No comments yet.</p>
+            }
+        </div>
+    </div>
+</div>

@@ -5,6 +5,7 @@ using AskMateWebApp.Models;
 using AskMateWebApp.Services;
 using AskMateWebApp.Domain;
 using System.IO;
+using System.Security.Claims;
 
 namespace AskMateWebApp.Controllers
 {
@@ -42,7 +43,7 @@ namespace AskMateWebApp.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var questions = _questionsService.GetAll(5);
+            var questions = _questionsService.GetAll(new IQuestionsService.GetAllOptions { Limit = 5 });
             return View(new QuestionListModel
             {
                 Questions = questions.Select(x => new QuestionListItemModel(x)).ToList()
@@ -52,7 +53,7 @@ namespace AskMateWebApp.Controllers
         [HttpGet]
         public IActionResult List(Question.SortField sort = Question.SortField.SubmissionTime, bool ascending = false)
         {
-            var questions = _questionsService.GetAll(sort, ascending);
+            var questions = _questionsService.GetAll(new IQuestionsService.GetAllOptions(sort, ascending));
             return View(new QuestionListModel
             {
                 SortField = sort,
@@ -73,7 +74,7 @@ namespace AskMateWebApp.Controllers
         {
             var question = _questionsService.GetOne(id);
             var tags = _tagsService.GetAll(id);
-            var answers = _answersService.GetAll(id, sort, ascending);
+            var answers = _answersService.GetAll(new IAnswersService.GetAllOptions(sort, ascending) { QuestionId = id });
             var questionComments = _commentsService.GetAll(ICommentsService.CommentType.Question, id);
             var answerComments = _commentsService.GetAll(ICommentsService.CommentType.Answer, answers.Select(x => x.Id).ToArray());
             _questionsService.View(id);
@@ -89,10 +90,11 @@ namespace AskMateWebApp.Controllers
         [HttpPost]
         public IActionResult Add(AddQuestionModel newQuestion)
         {
+            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
             string imageFileName = newQuestion.Image?.FileName;
             using Stream imageStream = newQuestion.Image?.OpenReadStream();
             string image = imageFileName == null ? null : _storageService.Save(imageFileName, imageStream);
-            int id = _questionsService.Add(newQuestion.Title, newQuestion.Message, image);
+            int id = _questionsService.Add(userId, newQuestion.Title, newQuestion.Message, image);
             return RedirectToAction("Details", new { id });
         }
 
@@ -128,10 +130,11 @@ namespace AskMateWebApp.Controllers
         [Route("[controller]/Add/[action]/{id}", Name = "add-answer")]
         public IActionResult Answer(int id, AddAnswerModel newAnswer)
         {
+            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
             string imageFileName = newAnswer.Image?.FileName;
             using Stream imageStream = newAnswer.Image?.OpenReadStream();
             string image = imageFileName == null ? null : _storageService.Save(imageFileName, imageStream);
-            _answersService.Add(id, newAnswer.Message, image);
+            _answersService.Add(userId, id, newAnswer.Message, image);
             return RedirectToAction("Details", new { id });
         }
 
@@ -149,7 +152,8 @@ namespace AskMateWebApp.Controllers
         [Route("[controller]/Add/[action]/{id}", Name = "add-question-comment")]
         public IActionResult Comment(int id, AddCommentModel newComment)
         {
-            _commentsService.Add(ICommentsService.CommentType.Question, id, newComment.Message);
+            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
+            _commentsService.Add(userId, ICommentsService.CommentType.Question, id, newComment.Message);
             return RedirectToAction("Details", new { id });
         }
 
@@ -198,14 +202,14 @@ namespace AskMateWebApp.Controllers
         public IActionResult Delete(int id, string redirect)
         {
             Question q = _questionsService.GetOne(id);
-            foreach (var a in _answersService.GetAll(q.Id))
+            foreach (var a in _answersService.GetAll(new IAnswersService.GetAllOptions { QuestionId = q.Id }))
             {
                 if (!string.IsNullOrEmpty(a.Image))
                 {
                     _storageService.Delete(a.Image);
                 }
             }
-            foreach (var a in _answersService.GetAll(q.Id))
+            foreach (var a in _answersService.GetAll(new IAnswersService.GetAllOptions { QuestionId = q.Id }))
             {
                 _commentsService.DeleteAll(ICommentsService.CommentType.Answer, a.Id);
             }

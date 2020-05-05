@@ -1,3 +1,4 @@
+@using System.Security.Claims
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,18 +25,46 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Questions" asp-action="List">All Questions</a>
                         </li>
-                        <environment names="Development">
+                        @if (Context.User.Identity.IsAuthenticated)
+                        {
                             <li class="nav-item">
-                                <form class="inline" method="post" asp-controller="Database" asp-action="Reset">
-                                    <a class="nav-link text-danger" asp-controller="Database" asp-action="Reset" onclick="javascript: this.parentNode.submit(); return false;">Reset</a>
-                                </form>
+                                <a class="nav-link text-dark" asp-controller="Users" asp-action="Index">Users</a>
                             </li>
-                        </environment>
+                            <environment names="Development">
+                                <li class="nav-item">
+                                    <form class="form-inline" method="post" asp-controller="Database" asp-action="Reset">
+                                        <a class="nav-link text-danger" asp-controller="Database" asp-action="Reset" onclick="javascript: this.parentNode.submit(); return false;">Reset</a>
+                                    </form>
+                                </li>
+                            </environment>
+                        }
                     </ul>
                     <form class="form-inline" method="get" asp-controller="Questions" asp-action="Search">
                         <input class="form-control" type="search" name="phrase" placeholder="Search">
                         <button class="btn text-success" type="submit">Search</button>
                     </form>
+                    <ul class="navbar-nav">
+                        @if (Context.User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-info" asp-controller="Users" asp-action="Details" asp-route-id="@Context.User.FindFirstValue("Id")">@Context.User.FindFirstValue("Username")</a>
+                            </li>
+                            <li class="nav-item">
+                                <form class="form-inline" method="post" asp-controller="Account" asp-action="Logout">
+                                    <a class="nav-link text-primary" asp-controller="Account" asp-action="Logout" onclick="javascript: this.parentNode.submit(); return false;">Logout</a>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-primary" asp-controller="Account" asp-action="Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-secondary" asp-controller="Account" asp-action="Register">Register</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>
