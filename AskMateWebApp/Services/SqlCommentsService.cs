@@ -13,7 +13,7 @@ namespace AskMateWebApp.Services
             {
                 Id = (int)reader["id"],
                 UserId = (int)reader["user_id"],
-                QuestionId = reader["question_id"] as int? ?? 0,
+                QuestionId = (int)reader["question_id"],
                 AnswerId = reader["answer_id"] as int? ?? 0,
                 SubmissionTime = (DateTime)reader["submission_time"],
                 EditedNumber = (int)reader["edited_number"],

@@ -1,9 +1,12 @@
 using AskMateWebApp.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace AskMateWebApp.Controllers
 {
@@ -24,13 +27,14 @@ namespace AskMateWebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult Reset()
+        public async Task<IActionResult> ResetAsync()
         {
             if (!_environment.IsDevelopment())
             {
                 return StatusCode(StatusCodes.Status405MethodNotAllowed);
             }
             _databaseService.Reset();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("List", "Questions");
         }
     }
