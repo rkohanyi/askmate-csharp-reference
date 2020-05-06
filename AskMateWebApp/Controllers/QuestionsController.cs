@@ -190,9 +190,10 @@ namespace AskMateWebApp.Controllers
         [Route("[controller]/Add/[action]/{id}", Name = "add-question-tag")]
         public IActionResult Tag(int id, AddTagModel newTag)
         {
+            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
             string[] tagNames = newTag.Tags.Split(',').Select(x => x.Trim()).ToArray();
             int[] tagIds = _tagsService.Add(tagNames).ToArray();
-            _questionsTagsService.Add(id, tagIds);
+            _questionsTagsService.Add(userId, id, tagIds);
             return RedirectToAction("Details", new { id });
         }
 
