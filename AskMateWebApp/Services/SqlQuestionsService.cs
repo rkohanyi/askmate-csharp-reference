@@ -179,9 +179,13 @@ namespace AskMateWebApp.Services
             command.ExecuteNonQuery();
         }
 
-        public void Vote(int id, int votes)
+        public void Vote(int userId, int id, int votes)
         {
             using var command = _connection.CreateCommand();
+
+            var userIdParam = command.CreateParameter();
+            userIdParam.ParameterName = "userId";
+            userIdParam.Value = userId;
 
             var idParam = command.CreateParameter();
             idParam.ParameterName = "id";
@@ -191,11 +195,12 @@ namespace AskMateWebApp.Services
             votesParam.ParameterName = "votes";
             votesParam.Value = votes;
 
-            command.CommandText = "UPDATE question SET vote_number = vote_number + @votes WHERE id = @id";
+            command.CommandText = "SELECT vote_question(@userId, @id, @votes)";
+            command.Parameters.Add(userIdParam);
             command.Parameters.Add(idParam);
             command.Parameters.Add(votesParam);
 
-            command.ExecuteNonQuery();
+            HandleExecuteNonQuery(command);
         }
     }
 }

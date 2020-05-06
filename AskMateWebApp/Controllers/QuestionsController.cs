@@ -167,7 +167,15 @@ namespace AskMateWebApp.Controllers
         [Route("[controller]/Vote/[action]/{id}", Name = "question-vote-up")]
         public IActionResult Up(int id)
         {
-            _questionsService.Vote(id, 1);
+            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
+            try
+            {
+                _questionsService.Vote(userId, id, 1);
+            }
+            catch (AskMateCannotVoteException)
+            {
+                return RedirectToAction("CannotVote");
+            }
             return Redirect(Request.Headers["Referer"]);
         }
 
@@ -175,8 +183,22 @@ namespace AskMateWebApp.Controllers
         [Route("[controller]/Vote/[action]/{id}", Name = "question-vote-down")]
         public IActionResult Down(int id)
         {
-            _questionsService.Vote(id, -1);
+            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
+            try
+            {
+                _questionsService.Vote(userId, id, -1);
+            }
+            catch (AskMateCannotVoteException)
+            {
+                return RedirectToAction("CannotVote");
+            }
             return Redirect(Request.Headers["Referer"]);
+        }
+
+        [HttpGet]
+        public IActionResult CannotVote()
+        {
+            return View();
         }
 
         [HttpGet]

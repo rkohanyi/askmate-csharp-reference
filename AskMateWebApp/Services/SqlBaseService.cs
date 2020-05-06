@@ -19,6 +19,10 @@ namespace AskMateWebApp.Services
                 {
                     throw new AskMateNotAuthorizedException(ex);
                 }
+                else if (sqlState == "45001")
+                {
+                    throw new AskMateCannotVoteException(ex);
+                }
                 throw;
             }
         }

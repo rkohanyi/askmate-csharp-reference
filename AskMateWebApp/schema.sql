@@ -103,6 +103,18 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION vote_question(p_user_id INTEGER, p_question_id INTEGER, p_votes INTEGER) RETURNS VOID AS $$
+DECLARE
+    user_id INTEGER;
+BEGIN
+    SELECT q.user_id FROM question AS q WHERE q.id = p_question_id INTO user_id;
+    IF user_id = p_user_id THEN
+        RAISE EXCEPTION 'Cannot vote on owned entity' USING ERRCODE = 45001;
+    END IF;
+    UPDATE question SET vote_number = vote_number + p_votes WHERE id = p_question_id;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION delete_question(p_user_id INTEGER, p_question_id INTEGER) RETURNS VOID AS $$
 DECLARE
     user_id INTEGER;
