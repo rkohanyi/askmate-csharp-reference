@@ -239,7 +239,15 @@ namespace AskMateWebApp.Controllers
         [Route("[controller]/{id}/Tags/{tagId}/Delete", Name = "delete-question-tag")]
         public IActionResult DeleteTag(int id, int tagId)
         {
-            _questionsTagsService.Delete(id, tagId);
+            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
+            try
+            {
+                _questionsTagsService.Delete(userId, id, tagId);
+            }
+            catch (AskMateNotAuthorizedException)
+            {
+                return Forbid();
+            }
             return RedirectToAction("Details", new { id });
         }
 

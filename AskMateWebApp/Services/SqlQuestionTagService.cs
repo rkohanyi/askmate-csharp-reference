@@ -24,9 +24,9 @@ namespace AskMateWebApp.Services
 
             using var command = _connection.CreateCommand();
             command.CommandText = @$"SELECT add_question_tag (
-                    @userId,
-                    @questionId, 
-                    ARRAY[{string.Join(", ", tagIds.Select((_, i) => $"@tagId{i}"))}]
+                @userId,
+                @questionId, 
+                ARRAY[{string.Join(", ", tagIds.Select((_, i) => $"@tagId{i}"))}]
             )";
 
             var userIdParam = command.CreateParameter();
@@ -51,16 +51,19 @@ namespace AskMateWebApp.Services
             HandleExecuteNonQuery(command);
         }
 
-        public void Delete(int questionId, params int[] tagIds)
+        public void Delete(int userId, int questionId, params int[] tagIds)
         {
             using var command = _connection.CreateCommand();
-            command.CommandText = $@"
-                DELETE FROM
-                    question_tag
-                WHERE
-                    question_id = @questionId AND
-                    tag_id IN ({string.Join(", ", tagIds.Select((_, i) => $"@tagId{i}"))})
-            ";
+            command.CommandText = $@"SELECT delete_question_tag (
+                @userId,
+                @questionId,
+                ARRAY[{string.Join(", ", tagIds.Select((_, i) => $"@tagId{i}"))}]
+            )"; ;
+
+            var userIdParam = command.CreateParameter();
+            userIdParam.ParameterName = "userId";
+            userIdParam.Value = userId;
+            command.Parameters.Add(userIdParam);
 
             var questionIdParam = command.CreateParameter();
             questionIdParam.ParameterName = "questionId";
@@ -70,12 +73,13 @@ namespace AskMateWebApp.Services
             for (int i = 0; i < tagIds.Length; i++)
             {
                 var tagIdParam = command.CreateParameter();
+                tagIdParam.DbType = DbType.Int32;
                 tagIdParam.ParameterName = $"tagId{i}";
                 tagIdParam.Value = tagIds[i];
                 command.Parameters.Add(tagIdParam);
             }
 
-            command.ExecuteNonQuery();
+            HandleExecuteNonQuery(command);
         }
 
         public void DeleteAll(int questionId)

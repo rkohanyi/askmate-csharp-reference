@@ -103,6 +103,18 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION delete_question_tag(p_user_id INTEGER, p_question_id INTEGER, p_tag_ids INTEGER[]) RETURNS VOID AS $$
+DECLARE
+    user_id INTEGER;
+BEGIN
+    SELECT q.user_id FROM question AS q WHERE q.id = p_question_id INTO user_id;
+    IF user_id <> p_user_id THEN
+        RAISE EXCEPTION 'Not authorized' USING ERRCODE = 45000;
+    END IF;
+    DELETE FROM question_tag WHERE question_id = p_question_id AND tag_id IN (unnest(p_tag_ids));
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION update_question(p_user_id INTEGER, p_question_id INTEGER, p_title TEXT, p_message TEXT, p_image TEXT) RETURNS VOID AS $$
 DECLARE
     user_id INTEGER;
