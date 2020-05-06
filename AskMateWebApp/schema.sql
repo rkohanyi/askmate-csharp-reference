@@ -1,3 +1,4 @@
+
 CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
 
 DROP VIEW IF EXISTS v_user;
@@ -158,6 +159,26 @@ BEGIN
     DELETE FROM question WHERE id = p_question_id;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION update_answer(p_user_id INTEGER, p_answer_id INTEGER, p_message TEXT, p_image TEXT) RETURNS VOID AS $$
+DECLARE
+    v_user_id INTEGER;
+BEGIN
+    SELECT a.user_id FROM answer AS a WHERE a.id = p_answer_id INTO v_user_id;
+    IF v_user_id <> p_user_id THEN
+        RAISE EXCEPTION 'Not authorized' USING ERRCODE = 45000;
+    END IF;
+    UPDATE
+        answer
+    SET
+        message = p_message,
+        image = p_image
+    WHERE
+        id = p_answer_id AND
+        user_id = p_user_id;
+END;
+$$ LANGUAGE plpgsql;
+
 
 CREATE OR REPLACE FUNCTION update_comment(p_user_id INTEGER, p_comment_id INTEGER, p_message TEXT) RETURNS VOID AS $$
 DECLARE

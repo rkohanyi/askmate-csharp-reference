@@ -5,7 +5,7 @@ using System.Data;
 
 namespace AskMateWebApp.Services
 {
-    public class SqlAnswersService : IAnswersService
+    public class SqlAnswersService : SqlBaseService, IAnswersService
     {
         private static Answer ToAnswer(IDataReader reader)
         {
@@ -139,9 +139,13 @@ namespace AskMateWebApp.Services
             return ToAnswer(reader);
         }
 
-        public void Update(int id, string message, string image)
+        public void Update(int userId, int id, string message, string image)
         {
             using var command = _connection.CreateCommand();
+
+            var userIdParam = command.CreateParameter();
+            userIdParam.ParameterName = "userId";
+            userIdParam.Value = userId;
 
             var idParam = command.CreateParameter();
             idParam.ParameterName = "id";
@@ -155,20 +159,13 @@ namespace AskMateWebApp.Services
             imageParam.ParameterName = "image";
             imageParam.Value = (object)image ?? DBNull.Value;
 
-            command.CommandText = @"
-                UPDATE
-                    answer
-                SET
-                    message = @message,
-                    image = @image
-                WHERE
-                    id = @id
-            ";
+            command.CommandText = @"SELECT update_answer(@userId, @id, @message, @image)";
+            command.Parameters.Add(userIdParam);
             command.Parameters.Add(idParam);
             command.Parameters.Add(messageParam);
             command.Parameters.Add(imageParam);
 
-            command.ExecuteNonQuery();
+            HandleExecuteNonQuery(command);
         }
 
         public void Vote(int id, int votes)
