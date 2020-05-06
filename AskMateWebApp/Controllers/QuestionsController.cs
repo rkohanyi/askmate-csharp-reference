@@ -193,7 +193,14 @@ namespace AskMateWebApp.Controllers
             int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
             string[] tagNames = newTag.Tags.Split(',').Select(x => x.Trim()).ToArray();
             int[] tagIds = _tagsService.Add(tagNames).ToArray();
-            _questionsTagsService.Add(userId, id, tagIds);
+            try
+            {
+                _questionsTagsService.Add(userId, id, tagIds);
+            }
+            catch (AskMateNotAuthorizedException)
+            {
+                return Forbid();
+            }
             return RedirectToAction("Details", new { id });
         }
 
