@@ -91,6 +91,18 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION add_question_tag(p_user_id INTEGER, p_question_id INTEGER, p_tag_ids INTEGER[]) RETURNS VOID AS $$
+DECLARE
+    user_id INTEGER;
+BEGIN
+    SELECT q.user_id FROM question AS q WHERE q.id = p_question_id INTO user_id;
+    IF user_id <> p_user_id THEN
+        RAISE EXCEPTION 'Not authorized' USING ERRCODE = 45000;
+    END IF;
+    INSERT INTO question_tag (question_id, tag_id) VALUES (p_question_id, unnest(p_tag_ids));
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE TRIGGER set_question_id_for_answer_comment_trigger
 BEFORE INSERT ON comment
 FOR EACH ROW EXECUTE FUNCTION set_question_id_for_answer_comment();
