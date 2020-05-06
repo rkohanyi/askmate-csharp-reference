@@ -161,29 +161,33 @@ namespace AskMateWebApp.Services
             HandleExecuteNonQuery(command);
         }
 
-        public void View(int userId, int id)
+        public void View(int? userId, int id)
         {
             using var command = _connection.CreateCommand();
 
-            var userIdParam = command.CreateParameter();
-            userIdParam.ParameterName = "userId";
-            userIdParam.Value = userId;
-
-            var idParam = command.CreateParameter();
-            idParam.ParameterName = "id";
-            idParam.Value = id;
-
-            command.CommandText = @"
+            string sql = @"
                 UPDATE
                     question
                 SET
                     view_number = view_number + 1
                 WHERE
-                    id = @id AND
-                    user_id <> @userId
+                    id = @id
             ";
+            var idParam = command.CreateParameter();
+            idParam.ParameterName = "id";
+            idParam.Value = id;
             command.Parameters.Add(idParam);
-            command.Parameters.Add(userIdParam);
+
+            if (userId != null)
+            {
+                sql += "AND user_id<> @userId";
+                var userIdParam = command.CreateParameter();
+                userIdParam.ParameterName = "userId";
+                userIdParam.Value = (object)userId ?? DBNull.Value;
+                command.Parameters.Add(userIdParam);
+            }
+
+            command.CommandText = sql;
 
             command.ExecuteNonQuery();
         }

@@ -78,7 +78,7 @@ namespace AskMateWebApp.Controllers
         [HttpGet]
         public IActionResult Details(int id, Answer.SortField sort = AskMateWebApp.Domain.Answer.SortField.SubmissionTime, bool ascending = false)
         {
-            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
+            int? userId = int.TryParse(HttpContext.User.FindFirstValue("Id"), out var i) ? i : (int?)null;
             var question = _questionsService.GetOne(id);
             var tags = _tagsService.GetAll(id);
             var answers = _answersService.GetAll(new IAnswersService.GetAllOptions(sort, ascending) { QuestionId = id });
