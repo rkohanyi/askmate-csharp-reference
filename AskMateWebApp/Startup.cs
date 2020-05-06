@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Npgsql;
+using Npgsql.Logging;
 using System;
 using System.Data;
 using System.IO;
@@ -51,6 +52,11 @@ namespace AskMateWebApp
 
         public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
+            if (webHostEnvironment.IsDevelopment())
+            {
+                NpgsqlLogManager.Provider = new ConsoleLoggingProvider(NpgsqlLogLevel.Debug, true, true);
+                NpgsqlLogManager.IsParameterLoggingEnabled = true;
+            }
             Configuration = configuration;
             uploadsDirectory = InitUploadsDirectory(webHostEnvironment);
             connectionString = InitConnectionString();
