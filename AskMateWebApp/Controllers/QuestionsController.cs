@@ -208,12 +208,6 @@ namespace AskMateWebApp.Controllers
         [Route("[controller]/{id}/Tags/{tagId}/Delete", Name = "delete-question-tag")]
         public IActionResult DeleteTag(int id, int tagId)
         {
-            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
-            Question q = _questionsService.GetOne(id);
-            if (q.UserId != userId)
-            {
-                return Forbid();
-            }
             _questionsTagsService.Delete(id, tagId);
             return RedirectToAction("Details", new { id });
         }
@@ -221,12 +215,7 @@ namespace AskMateWebApp.Controllers
         [HttpPost]
         public IActionResult Delete(int id, string redirect)
         {
-            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
             Question q = _questionsService.GetOne(id);
-            if (q.UserId != userId)
-            {
-                return Forbid();
-            }
             foreach (var a in _answersService.GetAll(new IAnswersService.GetAllOptions { QuestionId = q.Id }))
             {
                 if (!string.IsNullOrEmpty(a.Image))
