@@ -78,12 +78,13 @@ namespace AskMateWebApp.Controllers
         [HttpGet]
         public IActionResult Details(int id, Answer.SortField sort = AskMateWebApp.Domain.Answer.SortField.SubmissionTime, bool ascending = false)
         {
+            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
             var question = _questionsService.GetOne(id);
             var tags = _tagsService.GetAll(id);
             var answers = _answersService.GetAll(new IAnswersService.GetAllOptions(sort, ascending) { QuestionId = id });
             var questionComments = _commentsService.GetAll(ICommentsService.CommentType.Question, id);
             var answerComments = _commentsService.GetAll(ICommentsService.CommentType.Answer, answers.Select(x => x.Id).ToArray());
-            _questionsService.View(id);
+            _questionsService.View(userId, id);
             return View(new QuestionDetailModel(question, tags, questionComments, answers, answerComments));
         }
 
