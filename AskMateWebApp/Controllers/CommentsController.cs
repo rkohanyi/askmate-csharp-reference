@@ -32,7 +32,15 @@ namespace AskMateWebApp.Controllers
         [HttpPost]
         public IActionResult Edit(int id, AddCommentModel newComment)
         {
-            _commentsService.Update(id, newComment.Message);
+            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
+            try
+            {
+                _commentsService.Update(userId, id, newComment.Message);
+            }
+            catch (AskMateNotAuthorizedException)
+            {
+                return Forbid();
+            }
             return RedirectToAction("Details", "Questions", new { id = newComment.QuestionId });
         }
 

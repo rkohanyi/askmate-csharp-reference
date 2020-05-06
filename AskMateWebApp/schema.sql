@@ -159,6 +159,26 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION update_comment(p_user_id INTEGER, p_comment_id INTEGER, p_message TEXT) RETURNS VOID AS $$
+DECLARE
+    v_user_id INTEGER;
+BEGIN
+    SELECT c.user_id FROM comment AS c WHERE c.id = p_comment_id INTO v_user_id;
+    IF v_user_id <> p_user_id THEN
+        RAISE EXCEPTION 'Not authorized' USING ERRCODE = 45000;
+    END IF;
+    UPDATE
+        comment
+    SET
+        message = p_message,
+        edited_number = edited_number + 1,
+        submission_time = NOW()
+    WHERE
+        id = p_comment_id AND
+        user_id = p_user_id;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION delete_comment(p_user_id INTEGER, p_comment_id INTEGER) RETURNS VOID AS $$
 DECLARE
     v_user_id INTEGER;

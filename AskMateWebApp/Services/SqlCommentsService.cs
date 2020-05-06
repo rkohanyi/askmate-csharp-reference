@@ -186,9 +186,13 @@ namespace AskMateWebApp.Services
             return ToComment(reader);
         }
 
-        public void Update(int id, string message)
+        public void Update(int userId, int id, string message)
         {
             using var command = _connection.CreateCommand();
+
+            var userIdParam = command.CreateParameter();
+            userIdParam.ParameterName = "userId";
+            userIdParam.Value = userId;
 
             var idParam = command.CreateParameter();
             idParam.ParameterName = "id";
@@ -198,20 +202,12 @@ namespace AskMateWebApp.Services
             messageParam.ParameterName = "message";
             messageParam.Value = (object)message ?? DBNull.Value;
 
-            command.CommandText = @"
-                UPDATE
-                    comment
-                SET
-                    message = @message,
-                    edited_number = edited_number + 1,
-                    submission_time = NOW()
-                WHERE
-                    id = @id
-            ";
+            command.CommandText = @"SELECT update_comment(@userId, @id, @message)";
+            command.Parameters.Add(userIdParam);
             command.Parameters.Add(idParam);
             command.Parameters.Add(messageParam);
 
-            command.ExecuteNonQuery();
+            HandleExecuteNonQuery(command);
         }
     }
 }
