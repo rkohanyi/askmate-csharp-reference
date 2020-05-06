@@ -27,6 +27,6 @@ namespace AskMateWebApp.Services
         void Update(int id, string title, string message, string image);
         void View(int id);
         void Vote(int id, int votes);
-        void Delete(int id);
+        void Delete(int userId, int id);
     }
 }

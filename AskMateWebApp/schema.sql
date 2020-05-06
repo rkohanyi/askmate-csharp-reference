@@ -103,6 +103,18 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION delete_question(p_user_id INTEGER, p_question_id INTEGER) RETURNS VOID AS $$
+DECLARE
+    user_id INTEGER;
+BEGIN
+    SELECT q.user_id FROM question AS q WHERE q.id = p_question_id INTO user_id;
+    IF user_id <> p_user_id THEN
+        RAISE EXCEPTION 'Not authorized' USING ERRCODE = 45000;
+    END IF;
+    DELETE FROM question WHERE id = p_question_id;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION delete_comment(p_user_id INTEGER, p_comment_id INTEGER) RETURNS VOID AS $$
 DECLARE
     user_id INTEGER;
@@ -111,7 +123,7 @@ BEGIN
     IF user_id <> p_user_id THEN
         RAISE EXCEPTION 'Not authorized' USING ERRCODE = 45000;
     END IF;
-    DELEtE FROM comment WHERE id = p_comment_id;
+    DELETE FROM comment WHERE id = p_comment_id;
 END;
 $$ LANGUAGE plpgsql;
 

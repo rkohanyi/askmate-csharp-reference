@@ -5,7 +5,7 @@ using System.Data;
 
 namespace AskMateWebApp.Services
 {
-    public class SqlQuestionsService : IQuestionsService
+    public class SqlQuestionsService : SqlBaseService, IQuestionsService
     {
         private static Question ToQuestion(IDataReader reader)
         {
@@ -60,18 +60,23 @@ namespace AskMateWebApp.Services
             return (int)reader["id"];
         }
 
-        public void Delete(int id)
+        public void Delete(int userId, int id)
         {
             using var command = _connection.CreateCommand();
 
-            var param = command.CreateParameter();
-            param.ParameterName = "id";
-            param.Value = id;
+            var userIdParam = command.CreateParameter();
+            userIdParam.ParameterName = "userId";
+            userIdParam.Value = userId;
 
-            command.CommandText = "DELETE FROM question WHERE id = @id";
-            command.Parameters.Add(param);
+            var idParam = command.CreateParameter();
+            idParam.ParameterName = "id";
+            idParam.Value = id;
 
-            command.ExecuteNonQuery();
+            command.CommandText = "SELECT delete_question(@userId, @id)";
+            command.Parameters.Add(userIdParam);
+            command.Parameters.Add(idParam);
+
+            HandleExecuteNonQuery(command);
         }
 
         public List<Question> GetAll(IQuestionsService.GetAllOptions opts)

@@ -215,6 +215,7 @@ namespace AskMateWebApp.Controllers
         [HttpPost]
         public IActionResult Delete(int id, string redirect)
         {
+            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
             Question q = _questionsService.GetOne(id);
             foreach (var a in _answersService.GetAll(new IAnswersService.GetAllOptions { QuestionId = q.Id }))
             {
@@ -233,7 +234,14 @@ namespace AskMateWebApp.Controllers
                 _storageService.Delete(q.Image);
             }
             _commentsService.DeleteAll(ICommentsService.CommentType.Question, id);
-            _questionsService.Delete(q.Id);
+            try
+            {
+                _questionsService.Delete(userId, q.Id);
+            }
+            catch (AskMateNotAuthorizedException)
+            {
+                return Forbid();
+            }
             _questionsTagsService.DeleteAll(q.Id);
             if (redirect == null)
             {
