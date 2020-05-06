@@ -93,10 +93,10 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION add_question_tag(p_user_id INTEGER, p_question_id INTEGER, p_tag_ids INTEGER[]) RETURNS VOID AS $$
 DECLARE
-    user_id INTEGER;
+    v_user_id INTEGER;
 BEGIN
-    SELECT q.user_id FROM question AS q WHERE q.id = p_question_id INTO user_id;
-    IF user_id <> p_user_id THEN
+    SELECT q.user_id FROM question AS q WHERE q.id = p_question_id INTO v_user_id;
+    IF v_user_id <> p_user_id THEN
         RAISE EXCEPTION 'Not authorized' USING ERRCODE = 45000;
     END IF;
     INSERT INTO question_tag (question_id, tag_id) VALUES (p_question_id, unnest(p_tag_ids));
@@ -105,10 +105,10 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION delete_question_tag(p_user_id INTEGER, p_question_id INTEGER, p_tag_ids INTEGER[]) RETURNS VOID AS $$
 DECLARE
-    user_id INTEGER;
+    v_user_id INTEGER;
 BEGIN
-    SELECT q.user_id FROM question AS q WHERE q.id = p_question_id INTO user_id;
-    IF user_id <> p_user_id THEN
+    SELECT q.user_id FROM question AS q WHERE q.id = p_question_id INTO v_user_id;
+    IF v_user_id <> p_user_id THEN
         RAISE EXCEPTION 'Not authorized' USING ERRCODE = 45000;
     END IF;
     DELETE FROM question_tag WHERE question_id = p_question_id AND tag_id IN (unnest(p_tag_ids));
@@ -117,10 +117,10 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION update_question(p_user_id INTEGER, p_question_id INTEGER, p_title TEXT, p_message TEXT, p_image TEXT) RETURNS VOID AS $$
 DECLARE
-    user_id INTEGER;
+    v_user_id INTEGER;
 BEGIN
-    SELECT q.user_id FROM question AS q WHERE q.id = p_question_id INTO user_id;
-    IF user_id <> p_user_id THEN
+    SELECT q.user_id FROM question AS q WHERE q.id = p_question_id INTO v_user_id;
+    IF v_user_id <> p_user_id THEN
         RAISE EXCEPTION 'Not authorized' USING ERRCODE = 45000;
     END IF;
     UPDATE
@@ -137,10 +137,10 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION vote_question(p_user_id INTEGER, p_question_id INTEGER, p_votes INTEGER) RETURNS VOID AS $$
 DECLARE
-    user_id INTEGER;
+    v_user_id INTEGER;
 BEGIN
-    SELECT q.user_id FROM question AS q WHERE q.id = p_question_id INTO user_id;
-    IF user_id = p_user_id THEN
+    SELECT q.user_id FROM question AS q WHERE q.id = p_question_id INTO v_user_id;
+    IF v_user_id = p_user_id THEN
         RAISE EXCEPTION 'Cannot vote on owned entity' USING ERRCODE = 45001;
     END IF;
     UPDATE question SET vote_number = vote_number + p_votes WHERE id = p_question_id;
@@ -149,10 +149,10 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION delete_question(p_user_id INTEGER, p_question_id INTEGER) RETURNS VOID AS $$
 DECLARE
-    user_id INTEGER;
+    v_user_id INTEGER;
 BEGIN
-    SELECT q.user_id FROM question AS q WHERE q.id = p_question_id INTO user_id;
-    IF user_id <> p_user_id THEN
+    SELECT q.user_id FROM question AS q WHERE q.id = p_question_id INTO v_user_id;
+    IF v_user_id <> p_user_id THEN
         RAISE EXCEPTION 'Not authorized' USING ERRCODE = 45000;
     END IF;
     DELETE FROM question WHERE id = p_question_id;
@@ -161,10 +161,10 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION delete_comment(p_user_id INTEGER, p_comment_id INTEGER) RETURNS VOID AS $$
 DECLARE
-    user_id INTEGER;
+    v_user_id INTEGER;
 BEGIN
-    SELECT c.user_id FROM comment AS c WHERE c.id = p_comment_id INTO user_id;
-    IF user_id <> p_user_id THEN
+    SELECT c.user_id FROM comment AS c WHERE c.id = p_comment_id INTO v_user_id;
+    IF v_user_id <> p_user_id THEN
         RAISE EXCEPTION 'Not authorized' USING ERRCODE = 45000;
     END IF;
     DELETE FROM comment WHERE id = p_comment_id;
