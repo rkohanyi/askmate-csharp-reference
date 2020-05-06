@@ -127,9 +127,13 @@ namespace AskMateWebApp.Services
             return ToQuestion(reader);
         }
 
-        public void Update(int id, string title, string message, string image)
+        public void Update(int userId, int id, string title, string message, string image)
         {
             using var command = _connection.CreateCommand();
+
+            var userIdParam = command.CreateParameter();
+            userIdParam.ParameterName = "userId";
+            userIdParam.Value = userId;
 
             var idParam = command.CreateParameter();
             idParam.ParameterName = "id";
@@ -147,22 +151,14 @@ namespace AskMateWebApp.Services
             imageParam.ParameterName = "image";
             imageParam.Value = (object)image ?? DBNull.Value;
 
-            command.CommandText = @"
-                UPDATE
-                    question
-                SET
-                    title = @title,
-                    message = @message,
-                    image = @image
-                WHERE
-                    id = @id
-            ";
+            command.CommandText = "SELECT update_question(@userId, @id, @title, @message, @image)";
+            command.Parameters.Add(userIdParam);
             command.Parameters.Add(idParam);
             command.Parameters.Add(titleParam);
             command.Parameters.Add(messageParam);
             command.Parameters.Add(imageParam);
 
-            command.ExecuteNonQuery();
+            HandleExecuteNonQuery(command);
         }
 
         public void View(int id)

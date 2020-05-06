@@ -118,10 +118,18 @@ namespace AskMateWebApp.Controllers
         [HttpPost]
         public IActionResult Edit(int id, AddQuestionModel newQuestion)
         {
+            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
             string imageFileName = newQuestion.Image?.FileName;
             using Stream imageStream = newQuestion.Image?.OpenReadStream();
             string image = imageFileName == null ? null : _storageService.Save(imageFileName, imageStream);
-            _questionsService.Update(id, newQuestion.Title, newQuestion.Message, image);
+            try
+            {
+                _questionsService.Update(userId, id, newQuestion.Title, newQuestion.Message, image);
+            }
+            catch (AskMateNotAuthorizedException)
+            {
+                return Forbid();
+            }
             return RedirectToAction("Details", new { id });
         }
 
