@@ -26,17 +26,7 @@ namespace AskMateWebApp.Controllers
         public IActionResult Edit(int id)
         {
             var comment = _commentsService.GetOne(id);
-            AddCommentModel model;
-            if (comment.AnswerId > 0)
-            {
-                var answer = _answersService.GetOne((int)comment.AnswerId);
-                model = new AddCommentModel(answer.QuestionId, comment.Message);
-            }
-            else
-            {
-                model = new AddCommentModel(id, comment.Message);
-            }
-            return View(model);
+            return View(new AddCommentModel(comment.QuestionId, comment.Message));
         }
 
         [HttpPost]
