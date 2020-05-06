@@ -12,6 +12,7 @@ namespace AskMateWebApp.Services
             return new Comment
             {
                 Id = (int)reader["id"],
+                UserId = (int)reader["user_id"],
                 QuestionId = reader["question_id"] as int? ?? 0,
                 AnswerId = reader["answer_id"] as int? ?? 0,
                 SubmissionTime = (DateTime)reader["submission_time"],

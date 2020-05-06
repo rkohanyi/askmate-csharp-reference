@@ -84,5 +84,10 @@ namespace AskMateWebApp.Controllers
             }
             return LocalRedirect(returnUrl);
         }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }

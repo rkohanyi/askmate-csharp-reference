@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using AskMateWebApp.Services;
 using AskMateWebApp.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AskMateWebApp.Controllers
 {
+    [Authorize]
     public class CommentsController : Controller
     {
         private readonly ILogger<CommentsController> _logger;

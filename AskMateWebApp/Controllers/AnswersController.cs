@@ -1,6 +1,7 @@
 using AskMateWebApp.Domain;
 using AskMateWebApp.Models;
 using AskMateWebApp.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.IO;
@@ -8,6 +9,7 @@ using System.Security.Claims;
 
 namespace AskMateWebApp.Controllers
 {
+    [Authorize]
     public class AnswersController : Controller
     {
         private readonly ILogger<AnswersController> _logger;

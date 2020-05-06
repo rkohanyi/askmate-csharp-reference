@@ -6,9 +6,11 @@ using AskMateWebApp.Services;
 using AskMateWebApp.Domain;
 using System.IO;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AskMateWebApp.Controllers
 {
+    [Authorize]
     public class QuestionsController : Controller
     {
         private readonly ILogger<QuestionsController> _logger;
@@ -40,6 +42,7 @@ namespace AskMateWebApp.Controllers
             _searchService = searchService;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Index()
         {
@@ -50,6 +53,7 @@ namespace AskMateWebApp.Controllers
             });
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult List(Question.SortField sort = Question.SortField.SubmissionTime, bool ascending = false)
         {
@@ -62,6 +66,7 @@ namespace AskMateWebApp.Controllers
             });
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Search(string phrase)
         {
@@ -69,6 +74,7 @@ namespace AskMateWebApp.Controllers
             return View(results.Select(x => new QuestionSearchResultModel(x.Key, x.Value)).ToList());
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Details(int id, Answer.SortField sort = AskMateWebApp.Domain.Answer.SortField.SubmissionTime, bool ascending = false)
         {
@@ -194,6 +200,12 @@ namespace AskMateWebApp.Controllers
         [Route("[controller]/{id}/Tags/{tagId}/Delete", Name = "delete-question-tag")]
         public IActionResult DeleteTag(int id, int tagId)
         {
+            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
+            Question q = _questionsService.GetOne(id);
+            if (q.UserId != userId)
+            {
+                return Forbid();
+            }
             _questionsTagsService.Delete(id, tagId);
             return RedirectToAction("Details", new { id });
         }
@@ -201,7 +213,12 @@ namespace AskMateWebApp.Controllers
         [HttpPost]
         public IActionResult Delete(int id, string redirect)
         {
+            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
             Question q = _questionsService.GetOne(id);
+            if (q.UserId != userId)
+            {
+                return Forbid();
+            }
             foreach (var a in _answersService.GetAll(new IAnswersService.GetAllOptions { QuestionId = q.Id }))
             {
                 if (!string.IsNullOrEmpty(a.Image))
@@ -219,8 +236,8 @@ namespace AskMateWebApp.Controllers
                 _storageService.Delete(q.Image);
             }
             _commentsService.DeleteAll(ICommentsService.CommentType.Question, id);
-            _questionsTagsService.DeleteAll(q.Id);
             _questionsService.Delete(q.Id);
+            _questionsTagsService.DeleteAll(q.Id);
             if (redirect == null)
             {
                 return Redirect(Request.Headers["Referer"]);

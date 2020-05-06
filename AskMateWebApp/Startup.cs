@@ -1,7 +1,9 @@
 using AskMateWebApp.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -10,9 +12,38 @@ using Npgsql;
 using System;
 using System.Data;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace AskMateWebApp
 {
+    public sealed class CustomCookieAuthenticationEvents : CookieAuthenticationEvents
+    {
+        private static void RemoveReturnUrlFromRedirectUri(RedirectContext<CookieAuthenticationOptions> context)
+        {
+            var ub = new UriBuilder(context.RedirectUri);
+            var query = QueryHelpers.ParseQuery(ub.Query);
+            ub.Query = null;
+            query.Remove("ReturnUrl");
+            context.RedirectUri = ub.Uri.ToString();
+            foreach (var key in query.Keys)
+            {
+                context.RedirectUri = QueryHelpers.AddQueryString(context.RedirectUri, key, query[key]);
+            }
+        }
+
+        public override Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context)
+        {
+            RemoveReturnUrlFromRedirectUri(context);
+            return base.RedirectToAccessDenied(context);
+        }
+
+        public override Task RedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
+        {
+            RemoveReturnUrlFromRedirectUri(context);
+            return base.RedirectToLogin(context);
+        }
+    }
+
     public class Startup
     {
         private readonly string uploadsDirectory;
@@ -44,7 +75,9 @@ namespace AskMateWebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options => options.EventsType = typeof(CustomCookieAuthenticationEvents));
+            services.AddScoped<CustomCookieAuthenticationEvents>();
             services.AddScoped<IDbConnection>(_ =>
             {
                 var connection = new NpgsqlConnection(connectionString);

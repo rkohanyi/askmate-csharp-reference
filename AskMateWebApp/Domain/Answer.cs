@@ -22,6 +22,7 @@ namespace AskMateWebApp.Domain
         }
 
         public int Id { get; set; }
+        public int UserId { get; set; }
         public int QuestionId { get; set; }
         public DateTime SubmissionTime { get; set; }
         public int VoteNumber { get; set; }

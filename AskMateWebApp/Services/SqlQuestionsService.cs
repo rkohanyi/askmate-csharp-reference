@@ -12,6 +12,7 @@ namespace AskMateWebApp.Services
             return new Question
             {
                 Id = (int)reader["id"],
+                UserId = (int)reader["user_id"],
                 SubmissionTime = (DateTime)reader["submission_time"],
                 Message = reader["message"] as string,
                 Title = reader["title"] as string,
