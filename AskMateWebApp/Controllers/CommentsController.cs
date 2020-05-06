@@ -4,6 +4,7 @@ using AskMateWebApp.Services;
 using AskMateWebApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using AskMateWebApp.Domain;
 
 namespace AskMateWebApp.Controllers
 {
@@ -49,7 +50,14 @@ namespace AskMateWebApp.Controllers
         public IActionResult Delete(int id)
         {
             int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
-            _commentsService.Delete(userId, id);
+            try
+            {
+                _commentsService.Delete(userId, id);
+            }
+            catch (AskMateNotAuthorizedException)
+            {
+                return Forbid();
+            }
             return Redirect(Request.Headers["Referer"]);
         }
     }
