@@ -103,6 +103,18 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION delete_comment(p_user_id INTEGER, p_comment_id INTEGER) RETURNS VOID AS $$
+DECLARE
+    user_id INTEGER;
+BEGIN
+    SELECT c.user_id FROM comment AS c WHERE c.id = p_comment_id INTO user_id;
+    IF user_id <> p_user_id THEN
+        RAISE EXCEPTION 'Not authorized' USING ERRCODE = 45000;
+    END IF;
+    DELEtE FROM comment WHERE id = p_comment_id;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE TRIGGER set_question_id_for_answer_comment_trigger
 BEFORE INSERT ON comment
 FOR EACH ROW EXECUTE FUNCTION set_question_id_for_answer_comment();

@@ -6,7 +6,7 @@ using System.Runtime.ExceptionServices;
 
 namespace AskMateWebApp.Services
 {
-    public class SqlQuestionsTagsService : IQuestionsTagsService
+    public class SqlQuestionsTagsService : SqlBaseService, IQuestionsTagsService
     {
         private readonly IDbConnection _connection;
 
@@ -48,19 +48,7 @@ namespace AskMateWebApp.Services
                 command.Parameters.Add(tagIdParam);
             }
 
-            try
-            {
-                command.ExecuteNonQuery();
-            }
-            catch (DbException ex)
-            {
-                string sqlState = (string)ex.Data["SqlState"];
-                if (sqlState == "45000")
-                {
-                    throw new AskMateNotAuthorizedException(ex);
-                }
-                throw;
-            }
+            HandleExecuteNonQuery(command);
         }
 
         public void Delete(int questionId, params int[] tagIds)

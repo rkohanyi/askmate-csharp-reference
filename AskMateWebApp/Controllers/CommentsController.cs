@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using AskMateWebApp.Services;
 using AskMateWebApp.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace AskMateWebApp.Controllers
 {
@@ -47,7 +48,8 @@ namespace AskMateWebApp.Controllers
         [HttpPost]
         public IActionResult Delete(int id)
         {
-            _commentsService.Delete(id);
+            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
+            _commentsService.Delete(userId, id);
             return Redirect(Request.Headers["Referer"]);
         }
     }
