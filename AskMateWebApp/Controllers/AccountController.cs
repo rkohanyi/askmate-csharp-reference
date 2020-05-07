@@ -70,7 +70,15 @@ namespace AskMateWebApp.Controllers
         [HttpPost]
         public IActionResult Register(RegisterModel register)
         {
-            _usersService.Register(register.Username, register.Password);
+            try
+            {
+                _usersService.Register(register.Username, register.Password);
+            }
+            catch (AskMateException)
+            {
+                ModelState.AddModelError("Username", "Already taken.");
+                return View();
+            }
             return RedirectToAction("Login");
         }
 

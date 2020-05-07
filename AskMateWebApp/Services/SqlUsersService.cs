@@ -5,7 +5,7 @@ using System.Data;
 
 namespace AskMateWebApp.Services
 {
-    public class SqlUsersService : IUsersService
+    public class SqlUsersService : SqlBaseService, IUsersService
     {
         private static User ToUser(IDataReader reader)
         {
@@ -95,7 +95,7 @@ namespace AskMateWebApp.Services
             command.Parameters.Add(usernameParam);
             command.Parameters.Add(passwordParam);
 
-            command.ExecuteNonQuery();
+            HandleExecuteNonQuery(command);
         }
     }
 }
