@@ -179,6 +179,17 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION delete_answer(p_user_id INTEGER, p_answer_id INTEGER) RETURNS VOID AS $$
+DECLARE
+    v_user_id INTEGER;
+BEGIN
+    SELECT a.user_id FROM answer AS a WHERE a.id = p_answer_id INTO v_user_id;
+    IF v_user_id <> p_user_id THEN
+        RAISE EXCEPTION 'Not authorized' USING ERRCODE = 45000;
+    END IF;
+    DELETE FROM answer WHERE id = p_answer_id;
+END;
+$$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION update_comment(p_user_id INTEGER, p_comment_id INTEGER, p_message TEXT) RETURNS VOID AS $$
 DECLARE

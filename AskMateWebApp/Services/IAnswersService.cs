@@ -25,7 +25,7 @@ namespace AskMateWebApp.Services
         Answer GetOne(int id);
         int Add(int userId, int questionId, string message, string image);
         void Update(int userId, int id, string message, string image);
-        void Delete(int id);
+        void Delete(int userId, int id);
         void DeleteAll(int questionId);
         void Vote(int id, int votes);
     }

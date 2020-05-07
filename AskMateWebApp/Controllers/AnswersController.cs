@@ -77,13 +77,21 @@ namespace AskMateWebApp.Controllers
         [HttpPost]
         public IActionResult Delete(int id)
         {
+            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
             Answer a = _answersService.GetOne(id);
             if (!string.IsNullOrEmpty(a.Image))
             {
                 _storageService.Delete(a.Image);
             }
             _commentsService.DeleteAll(ICommentsService.CommentType.Answer, id);
-            _answersService.Delete(a.Id);
+            try
+            {
+                _answersService.Delete(userId, a.Id);
+            }
+            catch (AskMateNotAuthorizedException)
+            {
+                return Forbid();
+            }
             return Redirect(Request.Headers["Referer"]);
         }
 
