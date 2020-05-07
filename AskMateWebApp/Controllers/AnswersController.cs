@@ -126,5 +126,11 @@ namespace AskMateWebApp.Controllers
             }
             return Redirect(Request.Headers["Referer"]);
         }
+
+        [HttpGet]
+        public IActionResult CannotVote()
+        {
+            return View();
+        }
     }
 }
