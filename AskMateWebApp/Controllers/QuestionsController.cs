@@ -269,7 +269,7 @@ namespace AskMateWebApp.Controllers
                 {
                     _commentsService.DeleteAll(userId, ICommentsService.CommentType.Answer, a.Id);
                 }
-                _answersService.DeleteAll(id);
+                _answersService.DeleteAll(userId, id);
                 if (!string.IsNullOrEmpty(q.Image))
                 {
                     _storageService.Delete(q.Image);

@@ -78,18 +78,23 @@ namespace AskMateWebApp.Services
             HandleExecuteNonQuery(command);
         }
 
-        public void DeleteAll(int questionId)
+        public void DeleteAll(int userId, int questionId)
         {
             using var command = _connection.CreateCommand();
 
-            var param = command.CreateParameter();
-            param.ParameterName = "questionId";
-            param.Value = questionId;
+            var userIdParam = command.CreateParameter();
+            userIdParam.ParameterName = "userId";
+            userIdParam.Value = userId;
 
-            command.CommandText = "DELETE FROM answer WHERE question_id = @questionId";
-            command.Parameters.Add(param);
+            var questionIdParam = command.CreateParameter();
+            questionIdParam.ParameterName = "questionId";
+            questionIdParam.Value = questionId;
 
-            command.ExecuteNonQuery();
+            command.CommandText = "SELECT delete_all_answer(@userId, @questionId)";
+            command.Parameters.Add(userIdParam);
+            command.Parameters.Add(questionIdParam);
+
+            HandleExecuteNonQuery(command);
         }
 
         public List<Answer> GetAll(IAnswersService.GetAllOptions opts)

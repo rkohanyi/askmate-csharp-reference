@@ -191,6 +191,18 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION delete_all_answer(p_user_id INTEGER, p_question_id INTEGER) RETURNS VOID AS $$
+DECLARE
+    v_count INTEGER;
+BEGIN
+    SELECT COUNT(a.*) FROM answer AS a WHERE a.question_id = p_question_id AND a.user_id <> p_user_id INTO v_count;
+    IF v_count <> 0 THEN
+        RAISE EXCEPTION 'Not authorized' USING ERRCODE = 45000;
+    END IF;
+    DELETE FROM answer WHERE question_id = p_question_id;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION vote_answer(p_user_id INTEGER, p_answer_id INTEGER, p_votes INTEGER) RETURNS VOID AS $$
 DECLARE
     v_user_id INTEGER;
