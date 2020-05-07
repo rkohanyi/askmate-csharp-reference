@@ -85,18 +85,23 @@ namespace AskMateWebApp.Services
             HandleExecuteNonQuery(command);
         }
 
-        public void DeleteAll(ICommentsService.CommentType type, int parentId)
+        public void DeleteAll(int userId, ICommentsService.CommentType type, int parentId)
         {
             using var command = _connection.CreateCommand();
 
-            var param = command.CreateParameter();
-            param.ParameterName = "parentId";
-            param.Value = parentId;
+            var userIdParam = command.CreateParameter();
+            userIdParam.ParameterName = "userId";
+            userIdParam.Value = userId;
 
-            command.CommandText = $"DELETE FROM comment WHERE {type.ToString().ToSnakeCase() + "_id"} = @parentId";
-            command.Parameters.Add(param);
+            var parentIdParam = command.CreateParameter();
+            parentIdParam.ParameterName = "parentId";
+            parentIdParam.Value = parentId;
 
-            command.ExecuteNonQuery();
+            command.CommandText = $"SELECT delete_all_{type.ToString().ToSnakeCase()}_comment(@userId, @parentId)";
+            command.Parameters.Add(parentIdParam);
+            command.Parameters.Add(userIdParam);
+
+            HandleExecuteNonQuery(command);
         }
 
         public List<Comment> GetAll(int userId)

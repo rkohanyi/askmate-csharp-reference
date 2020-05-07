@@ -79,13 +79,13 @@ namespace AskMateWebApp.Controllers
         {
             int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
             Answer a = _answersService.GetOne(id);
-            if (!string.IsNullOrEmpty(a.Image))
-            {
-                _storageService.Delete(a.Image);
-            }
-            _commentsService.DeleteAll(ICommentsService.CommentType.Answer, id);
             try
             {
+                if (!string.IsNullOrEmpty(a.Image))
+                {
+                    _storageService.Delete(a.Image);
+                }
+                _commentsService.DeleteAll(userId, ICommentsService.CommentType.Answer, id);
                 _answersService.Delete(userId, a.Id);
             }
             catch (AskMateNotAuthorizedException)
@@ -99,7 +99,15 @@ namespace AskMateWebApp.Controllers
         [Route("[controller]/Vote/[action]/{id}", Name = "answer-vote-up")]
         public IActionResult Up(int id)
         {
-            _answersService.Vote(id, 1);
+            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
+            try
+            {
+                _answersService.Vote(userId, id, 1);
+            }
+            catch (AskMateCannotVoteException)
+            {
+                return RedirectToAction("CannotVote");
+            }
             return Redirect(Request.Headers["Referer"]);
         }
 
@@ -107,7 +115,15 @@ namespace AskMateWebApp.Controllers
         [Route("[controller]/Vote/[action]/{id}", Name = "answer-vote-down")]
         public IActionResult Down(int id)
         {
-            _answersService.Vote(id, -1);
+            int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
+            try
+            {
+                _answersService.Vote(userId, id, -1);
+            }
+            catch (AskMateCannotVoteException)
+            {
+                return RedirectToAction("CannotVote");
+            }
             return Redirect(Request.Headers["Referer"]);
         }
     }

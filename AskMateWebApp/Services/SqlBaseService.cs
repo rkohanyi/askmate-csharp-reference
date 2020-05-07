@@ -14,14 +14,20 @@ namespace AskMateWebApp.Services
             }
             catch (DbException ex)
             {
-                string sqlState = (string)ex.Data["SqlState"];
-                if (sqlState == "45000")
+                // NOTE: accessing "SqlState" might not work with every underlying RDBMS.
+                if (int.TryParse((string)ex.Data["SqlState"], out int sqlState))
                 {
-                    throw new AskMateNotAuthorizedException(ex);
-                }
-                else if (sqlState == "45001")
-                {
-                    throw new AskMateCannotVoteException(ex);
+                    if (sqlState >= 45000 && sqlState < 46000)
+                    {
+                        if (sqlState == 45000)
+                        {
+                            throw new AskMateNotAuthorizedException(ex);
+                        }
+                        else if (sqlState == 45001)
+                        {
+                            throw new AskMateCannotVoteException(ex);
+                        }
+                    }
                 }
                 throw;
             }

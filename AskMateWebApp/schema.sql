@@ -191,6 +191,18 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION vote_answer(p_user_id INTEGER, p_answer_id INTEGER, p_votes INTEGER) RETURNS VOID AS $$
+DECLARE
+    v_user_id INTEGER;
+BEGIN
+    SELECT q.user_id FROM answer AS q WHERE q.id = p_answer_id INTO v_user_id;
+    IF v_user_id = p_user_id THEN
+        RAISE EXCEPTION 'Cannot vote on owned entity' USING ERRCODE = 45001;
+    END IF;
+    UPDATE answer SET vote_number = vote_number + p_votes WHERE id = p_answer_id;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION update_comment(p_user_id INTEGER, p_comment_id INTEGER, p_message TEXT) RETURNS VOID AS $$
 DECLARE
     v_user_id INTEGER;
@@ -220,6 +232,30 @@ BEGIN
         RAISE EXCEPTION 'Not authorized' USING ERRCODE = 45000;
     END IF;
     DELETE FROM comment WHERE id = p_comment_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION delete_all_question_comment(p_user_id INTEGER, p_question_id INTEGER) RETURNS VOID AS $$
+DECLARE
+    v_count INTEGER;
+BEGIN
+    SELECT COUNT(c.*) FROM comment AS c WHERE c.question_id = p_question_id AND c.user_id <> p_user_id INTO v_count;
+    IF v_count <> 0 THEN
+        RAISE EXCEPTION 'Not authorized' USING ERRCODE = 45000;
+    END IF;
+    DELETE FROM comment WHERE question_id = p_question_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION delete_all_answer_comment(p_user_id INTEGER, p_answer_id INTEGER) RETURNS VOID AS $$
+DECLARE
+    v_count INTEGER;
+BEGIN
+    SELECT COUNT(c.*) FROM comment AS c WHERE c.answer_id = p_answer_id AND c.user_id <> p_user_id INTO v_count;
+    IF v_count <> 0 THEN
+        RAISE EXCEPTION 'Not authorized' USING ERRCODE = 45000;
+    END IF;
+    DELETE FROM comment WHERE answer_id = p_answer_id;
 END;
 $$ LANGUAGE plpgsql;
 

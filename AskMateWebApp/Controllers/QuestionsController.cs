@@ -256,32 +256,32 @@ namespace AskMateWebApp.Controllers
         {
             int userId = int.Parse(HttpContext.User.FindFirstValue("Id"));
             Question q = _questionsService.GetOne(id);
-            foreach (var a in _answersService.GetAll(new IAnswersService.GetAllOptions { QuestionId = q.Id }))
-            {
-                if (!string.IsNullOrEmpty(a.Image))
-                {
-                    _storageService.Delete(a.Image);
-                }
-            }
-            foreach (var a in _answersService.GetAll(new IAnswersService.GetAllOptions { QuestionId = q.Id }))
-            {
-                _commentsService.DeleteAll(ICommentsService.CommentType.Answer, a.Id);
-            }
-            _answersService.DeleteAll(id);
-            if (!string.IsNullOrEmpty(q.Image))
-            {
-                _storageService.Delete(q.Image);
-            }
-            _commentsService.DeleteAll(ICommentsService.CommentType.Question, id);
             try
             {
+                foreach (var a in _answersService.GetAll(new IAnswersService.GetAllOptions { QuestionId = q.Id }))
+                {
+                    if (!string.IsNullOrEmpty(a.Image))
+                    {
+                        _storageService.Delete(a.Image);
+                    }
+                }
+                foreach (var a in _answersService.GetAll(new IAnswersService.GetAllOptions { QuestionId = q.Id }))
+                {
+                    _commentsService.DeleteAll(userId, ICommentsService.CommentType.Answer, a.Id);
+                }
+                _answersService.DeleteAll(id);
+                if (!string.IsNullOrEmpty(q.Image))
+                {
+                    _storageService.Delete(q.Image);
+                }
+                _commentsService.DeleteAll(userId, ICommentsService.CommentType.Question, id);
+                _questionsTagsService.DeleteAll(q.Id);
                 _questionsService.Delete(userId, q.Id);
             }
             catch (AskMateNotAuthorizedException)
             {
                 return Forbid();
             }
-            _questionsTagsService.DeleteAll(q.Id);
             if (redirect == null)
             {
                 return Redirect(Request.Headers["Referer"]);

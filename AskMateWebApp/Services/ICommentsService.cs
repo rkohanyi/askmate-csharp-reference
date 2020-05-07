@@ -18,6 +18,6 @@ namespace AskMateWebApp.Services
         int Add(int userId, CommentType type, int parentId, string message);
         void Update(int userId, int id, string message);
         void Delete(int userId, int id);
-        void DeleteAll(CommentType type, int parentId);
+        void DeleteAll(int userId, CommentType type, int parentId);
     }
 }
