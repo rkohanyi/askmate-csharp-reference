@@ -17,7 +17,7 @@ namespace AskMateWebApp.Services
                 // NOTE: accessing "SqlState" might not work with every underlying RDBMS.
                 if (int.TryParse((string)ex.Data["SqlState"], out int sqlState))
                 {
-                    if (sqlState >= 23505)
+                    if (sqlState == 23505)
                     {
                         throw new AskMateException();
                     }
