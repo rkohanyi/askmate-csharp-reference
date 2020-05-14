@@ -1,4 +1,4 @@
-namespace AskMateWebApp.Domain
+namespace AskMateCommon.Domain
 {
     public class Tag
     {

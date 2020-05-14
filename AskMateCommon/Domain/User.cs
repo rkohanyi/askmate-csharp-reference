@@ -1,6 +1,6 @@
 using System;
 
-namespace AskMateWebApp.Domain
+namespace AskMateCommon.Domain
 {
     public class User
     {

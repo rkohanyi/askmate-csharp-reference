@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using AskMateWebApp.Services;
+using AskMateCommon.Services;
 using AskMateWebApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using AskMateWebApp.Domain;
+using AskMateCommon.Domain;
 
 namespace AskMateWebApp.Controllers
 {

@@ -1,9 +1,9 @@
 using Microsoft.Extensions.Logging;
 using System.Data;
 
-namespace AskMateWebApp.Services
+namespace AskMateCommon.Services
 {
-    class PostgreSqlDatabaseService : IDatabaseService
+    public class PostgreSqlDatabaseService : IDatabaseService
     {
         private static readonly string[] SCRIPTS = { "schema", "data" };
 

@@ -1,10 +1,10 @@
-using AskMateWebApp.Domain;
+using AskMateCommon.Domain;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
-namespace AskMateWebApp.Services
+namespace AskMateCommon.Services
 {
     public class SqlSearchService : ISearchService
     {

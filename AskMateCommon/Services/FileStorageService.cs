@@ -1,8 +1,8 @@
 using System.IO;
 
-namespace AskMateWebApp.Services
+namespace AskMateCommon.Services
 {
-    class FileStorageService : IStorageService
+    public class FileStorageService : IStorageService
     {
         private readonly string _uploadsDirectory;
 

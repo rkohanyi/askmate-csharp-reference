@@ -1,9 +1,9 @@
-using AskMateWebApp.Domain;
+using AskMateCommon.Domain;
 using System;
 using System.Collections.Generic;
 using System.Data;
 
-namespace AskMateWebApp.Services
+namespace AskMateCommon.Services
 {
     public class SqlAnswersService : SqlBaseService, IAnswersService
     {

@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace AskMateWebApp.Services
+namespace AskMateCommon.Services
 {
     public interface IStorageService
     {

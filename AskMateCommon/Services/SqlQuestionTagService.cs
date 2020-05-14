@@ -1,10 +1,10 @@
-using AskMateWebApp.Domain;
+using AskMateCommon.Domain;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 
-namespace AskMateWebApp.Services
+namespace AskMateCommon.Services
 {
     public class SqlQuestionsTagsService : SqlBaseService, IQuestionsTagsService
     {

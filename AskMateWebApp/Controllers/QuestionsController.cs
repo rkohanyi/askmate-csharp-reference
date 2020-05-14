@@ -2,8 +2,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using AskMateWebApp.Models;
-using AskMateWebApp.Services;
-using AskMateWebApp.Domain;
+using AskMateCommon.Services;
+using AskMateCommon.Domain;
 using System.IO;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
@@ -76,7 +76,7 @@ namespace AskMateWebApp.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult Details(int id, Answer.SortField sort = AskMateWebApp.Domain.Answer.SortField.SubmissionTime, bool ascending = false)
+        public IActionResult Details(int id, Answer.SortField sort = AskMateCommon.Domain.Answer.SortField.SubmissionTime, bool ascending = false)
         {
             int? userId = int.TryParse(HttpContext.User.FindFirstValue("Id"), out var i) ? i : (int?)null;
             var question = _questionsService.GetOne(id);

@@ -1,8 +1,8 @@
-using AskMateWebApp.Domain;
+using AskMateCommon.Domain;
 using System.Data;
 using System.Data.Common;
 
-namespace AskMateWebApp.Services
+namespace AskMateCommon.Services
 {
     public abstract class SqlBaseService
     {

@@ -1,6 +1,6 @@
-using AskMateWebApp.Domain;
+using AskMateCommon.Domain;
 using AskMateWebApp.Models;
-using AskMateWebApp.Services;
+using AskMateCommon.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;

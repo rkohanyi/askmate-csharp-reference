@@ -1,4 +1,4 @@
-using AskMateWebApp.Domain;
+using AskMateCommon.Domain;
 using System;
 
 namespace AskMateWebApp.Models
