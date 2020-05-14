@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace AskMateWebApp.Helpers
+namespace AskMate.Web.Helpers
 {
     [HtmlTargetElement("pluralize")]
     public class PluralizeTagHelper : TagHelper

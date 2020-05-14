@@ -1,6 +1,6 @@
 using System;
 
-namespace AskMateCommon.Domain
+namespace AskMate.Common.Domain
 {
     public class AskMateNotAuthorizedException : AskMateException
     {

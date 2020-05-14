@@ -1,4 +1,4 @@
-namespace AskMateCommon.Services
+namespace AskMate.Common.Services
 {
     public interface IQuestionsTagsService
     {

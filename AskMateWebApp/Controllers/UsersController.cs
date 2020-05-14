@@ -1,11 +1,12 @@
-using AskMateWebApp.Models;
-using AskMateCommon.Services;
+using AskMate.Web.Models;
+using AskMate.Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 
-namespace AskMateWebApp.Controllers
+namespace AskMate.Web.Controllers
+
 {
     [Authorize]
     public class UsersController : Controller

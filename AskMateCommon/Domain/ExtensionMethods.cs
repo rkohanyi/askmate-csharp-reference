@@ -1,6 +1,6 @@
 using System.Linq;
 
-namespace AskMateCommon.Domain
+namespace AskMate.Common.Domain
 {
     public static class ExtensionMethods
     {

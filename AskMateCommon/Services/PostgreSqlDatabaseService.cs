@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using System.Data;
 
-namespace AskMateCommon.Services
+namespace AskMate.Common.Services
 {
     public class PostgreSqlDatabaseService : IDatabaseService
     {

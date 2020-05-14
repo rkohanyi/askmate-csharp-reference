@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using AskMateCommon.Services;
-using AskMateWebApp.Models;
+using AskMate.Common.Services;
+using AskMate.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using AskMateCommon.Domain;
+using AskMate.Common.Domain;
 
-namespace AskMateWebApp.Controllers
+namespace AskMate.Web.Controllers
+
 {
     [Authorize]
     public class CommentsController : Controller

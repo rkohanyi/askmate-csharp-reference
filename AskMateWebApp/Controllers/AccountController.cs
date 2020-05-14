@@ -1,6 +1,6 @@
-using AskMateCommon.Domain;
-using AskMateWebApp.Models;
-using AskMateCommon.Services;
+using AskMate.Common.Domain;
+using AskMate.Web.Models;
+using AskMate.Common.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +11,8 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace AskMateWebApp.Controllers
+namespace AskMate.Web.Controllers
+
 {
     [Authorize]
     public class AccountController : Controller

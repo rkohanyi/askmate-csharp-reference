@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace AskMateCommon.Services
+namespace AskMate.Common.Services
 {
     public class FileStorageService : IStorageService
     {

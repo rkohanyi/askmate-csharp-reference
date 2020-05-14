@@ -1,7 +1,7 @@
-using AskMateCommon.Domain;
+using AskMate.Common.Domain;
 using Microsoft.AspNetCore.Http;
 
-namespace AskMateWebApp.Models
+namespace AskMate.Web.Models
 {
     public class AddAnswerModel
     {

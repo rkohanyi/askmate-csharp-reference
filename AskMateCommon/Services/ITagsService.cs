@@ -1,7 +1,7 @@
-using AskMateCommon.Domain;
+using AskMate.Common.Domain;
 using System.Collections.Generic;
 
-namespace AskMateCommon.Services
+namespace AskMate.Common.Services
 {
     public interface ITagsService
     {

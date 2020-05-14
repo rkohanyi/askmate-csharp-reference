@@ -1,13 +1,14 @@
-using AskMateCommon.Domain;
-using AskMateWebApp.Models;
-using AskMateCommon.Services;
+using AskMate.Common.Domain;
+using AskMate.Web.Models;
+using AskMate.Common.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.IO;
 using System.Security.Claims;
 
-namespace AskMateWebApp.Controllers
+namespace AskMate.Web.Controllers
+
 {
     [Authorize]
     public class AnswersController : Controller

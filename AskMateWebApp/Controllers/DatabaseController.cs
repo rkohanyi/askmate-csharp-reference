@@ -1,4 +1,4 @@
-using AskMateCommon.Services;
+using AskMate.Common.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Hosting;
@@ -8,7 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-namespace AskMateWebApp.Controllers
+namespace AskMate.Web.Controllers
 {
     public class DatabaseController : Controller
     {

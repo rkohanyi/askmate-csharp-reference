@@ -1,4 +1,4 @@
-namespace AskMateWebApp.Models
+namespace AskMate.Web.Models
 {
     public class AddTagModel
     {

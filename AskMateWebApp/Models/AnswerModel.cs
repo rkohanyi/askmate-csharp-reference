@@ -1,9 +1,9 @@
-using AskMateCommon.Domain;
+using AskMate.Common.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AskMateWebApp.Models
+namespace AskMate.Web.Models
 {
     public class AnswerModel
     {

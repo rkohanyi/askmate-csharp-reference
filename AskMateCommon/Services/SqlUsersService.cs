@@ -1,9 +1,9 @@
-using AskMateCommon.Domain;
+using AskMate.Common.Domain;
 using System;
 using System.Collections.Generic;
 using System.Data;
 
-namespace AskMateCommon.Services
+namespace AskMate.Common.Services
 {
     public class SqlUsersService : SqlBaseService, IUsersService
     {

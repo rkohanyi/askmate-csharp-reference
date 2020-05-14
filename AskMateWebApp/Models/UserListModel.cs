@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace AskMateWebApp.Models
+namespace AskMate.Web.Models
 {
     public class UserListModel
     {

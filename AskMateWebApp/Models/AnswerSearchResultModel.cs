@@ -1,7 +1,7 @@
-using AskMateCommon.Domain;
+using AskMate.Common.Domain;
 using System;
 
-namespace AskMateWebApp.Models
+namespace AskMate.Web.Models
 {
     public class AnswerSearchResultModel
     {

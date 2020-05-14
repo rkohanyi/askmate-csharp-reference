@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
-namespace AskMateWebApp.Helpers
+namespace AskMate.Web.Helpers
 {
     [HtmlTargetElement(Attributes = "sort")]
     public class SortTagHelper : TagHelper
